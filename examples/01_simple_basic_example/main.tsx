@@ -85,6 +85,7 @@ const rootComponent: SchemeComponent = {
 							id: 'tagList_01',
 							valueName: 'tagList_01',
 							label: 'Список тегов',
+							allowAddRemove: true,
 							type: SchemeComponentTypes.TAG_LIST
 						},
 						{
@@ -127,8 +128,7 @@ const state: FormState = {
 
 const handleFormFinish = (state: FormState) => {
 	console.log(state);
-}
-console.log("HELLO WORLD");
+};
 
 createRoot(document.getElementById('root')!).render(
 		<>
