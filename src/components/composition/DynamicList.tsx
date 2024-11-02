@@ -31,7 +31,6 @@ export const DynamicList = ({component}: DynamicListProps) => {
 				});
 				form.setFieldValue(component.path, [emptyItem])
 			}
-			console.log('test');
 		}
 	}, [listValue, component]);
 
