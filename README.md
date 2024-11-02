@@ -16,8 +16,11 @@ React fast and dynamic form constructor.
 
 ```bash
 npm install react-json-fast-forms
+```
+```bash
 yarn add react-json-fast-forms
 ```
+
 ## Usage
 
 🔧 At work...
