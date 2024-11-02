@@ -71,9 +71,15 @@ export const SchemeComponentFabric = (component: SchemeComponent) => {
 				)
 			}
 		}
-		case SchemeComponentTypes.TAG_LIST: return (
-			<TagList/>
-		)
+		case SchemeComponentTypes.TAG_LIST: {
+			const {allowAddRemove} = component;
+			return (
+				<TagList
+					allowAdd={allowAddRemove && allowAddRemove}
+					allowRemove={allowAddRemove && allowAddRemove}
+				/>
+			)
+		}
 		case SchemeComponentTypes.HTML: {
 			const {content} = component;
 			if (!content) {
