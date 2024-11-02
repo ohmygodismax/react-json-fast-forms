@@ -2,7 +2,7 @@
 [![npm](https://img.shields.io/npm/v/react-json-fast-forms)](https://www.npmjs.com/package/react-hooks-worker)
 [![size](https://img.shields.io/bundlephobia/minzip/react-json-fast-forms)](https://bundlephobia.com/result?p=react-json-fast-forms)
 
-![RealWorld Example Applications](media/logo.jpg)
+![react-json-fast-forms](media/react-json-fast-forms.png)
 
 React fast and dynamic form constructor.
 
