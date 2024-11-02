@@ -1,0 +1,1 @@
+export type FormState = {[key: string]: string | number | string[] | FormState | FormState[] | boolean | null | undefined};
