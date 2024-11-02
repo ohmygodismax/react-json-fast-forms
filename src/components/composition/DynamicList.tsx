@@ -29,7 +29,11 @@ export const DynamicList = ({component}: DynamicListProps) => {
 						emptyItem[valueName] = undefined;
 					}
 				});
-				form.setFieldValue(component.path, [emptyItem])
+				const initialValue = [];
+				for (let i = 0; i < defaultRepetitions - listValue.length; i++) {
+					initialValue.push({...emptyItem});
+				}
+				form.setFieldValue(component.path, initialValue);
 			}
 		}
 	}, [listValue, component]);
