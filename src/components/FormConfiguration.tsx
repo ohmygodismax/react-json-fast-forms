@@ -21,7 +21,7 @@ export const FormConfiguration = ({locale, designToken, children}: FormConfigura
 				colorPrimary: designToken?.colorPrimary,
 				colorBgBase: designToken?.colorBgBase,
 				colorTextBase: designToken?.colorTextBase,
-				colorBgSpotlight: designToken?.colorBgBase,
+				colorBgSpotlight: designToken?.colorPrimary,
 				colorPrimaryBg: designToken?.colorPrimary
 			}
 		 : undefined
