@@ -28,7 +28,7 @@ export const Component = ({path, component} : ComponentProps) => {
 			}
 			default: {
 				const required = component.validate?.required;
-				const {valueName, label} = component;
+				const {valueName, label, readonly} = component;
 				if (!valueName || valueName === '') {
 					throw new Error('ValueName is required');
 				}
@@ -37,6 +37,7 @@ export const Component = ({path, component} : ComponentProps) => {
 						name={path ? [path, valueName] : valueName}
 						label={label}
 						isRequired={required}
+						readOnly={readonly}
 					>
 						{reactComponent}
 					</FormItemComponent>

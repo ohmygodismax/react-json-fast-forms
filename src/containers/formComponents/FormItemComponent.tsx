@@ -6,10 +6,11 @@ interface ComponentProps {
 	label?: string,
 	name: string | string[],
 	children: ReactElement,
-	isRequired?: boolean
+	isRequired?: boolean,
+	readOnly?: boolean,
 }
 
-export const FormItemComponent = ({label, name, isRequired = false, children}: ComponentProps) => {
+export const FormItemComponent = ({label, name, isRequired = false, readOnly, children}: ComponentProps) => {
 	return (
 		<ComponentLayout>
 			<Form.Item
@@ -17,6 +18,7 @@ export const FormItemComponent = ({label, name, isRequired = false, children}: C
 				rules={[{required: isRequired}]}
 				name={name}
 				label={label && label}
+				tooltip={readOnly && 'Поле доступно только для просмотра'}
 			>
 				{children}
 			</Form.Item>
