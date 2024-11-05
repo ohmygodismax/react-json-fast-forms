@@ -2,7 +2,7 @@
   "name": "react-json-fast-forms",
   "description": "JavaScript library for dynamic creation of forms based on json-structure",
   "private": false,
-  "version": "0.0.1",
+  "version": "0.0.6",
   "author": {
     "name": "Maxim Kulakov",
     "nickname": "ohmygodismax",
