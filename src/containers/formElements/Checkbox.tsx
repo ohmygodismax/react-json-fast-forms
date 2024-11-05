@@ -4,11 +4,11 @@ import {useEffect, useMemo} from "react";
 
 interface CheckboxProps {
 	value?: string,
-	disabled?: boolean,
-	onChange?: (checked: string | boolean | undefined) => void
+	onChange?: (checked: string | boolean | undefined) => void,
+	readOnly?: boolean
 }
 
-export const Checkbox = ({value, disabled = false, onChange}: CheckboxProps) => {
+export const Checkbox = ({value, onChange, readOnly}: CheckboxProps) => {
 	useEffect(() => {
 		if (onChange) {
 			onChange(value);
@@ -25,5 +25,11 @@ export const Checkbox = ({value, disabled = false, onChange}: CheckboxProps) => 
 		}
 	}
 
-	return <AntCheckbox checked={checked} disabled={disabled} onChange={handleChange}/>
+	return (
+		<AntCheckbox
+			checked={checked}
+			disabled={readOnly ? readOnly : undefined}
+			onChange={handleChange}
+		/>
+	)
 }

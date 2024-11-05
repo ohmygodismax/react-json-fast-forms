@@ -7,6 +7,7 @@ interface ITagListProps {
 	onChange?: (value: string[]) => void,
 	allowAdd?: boolean,
 	allowRemove?: boolean,
+	readOnly?: boolean,
 }
 
 const nestedStyle: CSSProperties = {
@@ -14,7 +15,8 @@ const nestedStyle: CSSProperties = {
 	margin: 2
 };
 
-export const TagList = ({value, allowAdd = false, allowRemove = false, onChange}: ITagListProps) => {
+
+export const TagList = ({value, allowAdd = false, allowRemove = false, readOnly, onChange}: ITagListProps) => {
 	const {	token: { colorPrimary, colorBgContainer }	} = theme.useToken();
 
 	const inputRef = useRef<InputRef>(null);
@@ -39,7 +41,7 @@ export const TagList = ({value, allowAdd = false, allowRemove = false, onChange}
 	};
 
 	const handleInputConfirm = () => {
-		if (inputValue && onChange) {
+		if (inputValue && onChange && !value?.includes(inputValue)) {
 			const newValue = value ? [...value, inputValue] : [inputValue];
 			onChange(newValue);
 		}
@@ -57,7 +59,7 @@ export const TagList = ({value, allowAdd = false, allowRemove = false, onChange}
 							...nestedStyle
 						}}
 						color={colorPrimary}
-						closeIcon={allowRemove ? <CloseCircleOutlined style={{color: colorBgContainer}}/> : null}
+						closeIcon={allowRemove && !readOnly ? <CloseCircleOutlined style={{color: colorBgContainer}}/> : null}
 						onClose={() => handleTagClose(val)}
 					>
 						{val}
@@ -73,7 +75,7 @@ export const TagList = ({value, allowAdd = false, allowRemove = false, onChange}
 					Нет доступных элементов
 				</Tag>
 			}
-			{allowAdd &&
+			{allowAdd && !readOnly &&
 				<>
 					{inputVisible ?
 						<Input
