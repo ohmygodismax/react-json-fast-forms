@@ -2,7 +2,6 @@ import {createRoot} from 'react-dom/client'
 import {FormState} from "@/models/FormState.ts";
 import {FormScheme} from "@/models/scheme/FormScheme.ts";
 import {SchemeComponent} from "@/models/scheme/SchemeComponent.ts";
-import {SchemeComponentTypes} from "@/models/scheme/SchemeComponentTypes.ts";
 import {FormConfiguration} from "@/components/FormConfiguration.tsx";
 import {DynamicForm} from "@/components/DynamicForm.tsx";
 
@@ -20,16 +19,16 @@ const rootComponent: SchemeComponent = {
 					id: 'text_01',
 					valueName: 'text_01',
 					label: 'Введите текстовое значение',
-					type: SchemeComponentTypes.TEXT_FIELD
+					type: 'textField'
 				},
 				{
 					id: 'date_01',
 					valueName: 'date_01',
 					label: 'Введите дату',
-					type: SchemeComponentTypes.DATE
+					type: 'date'
 				}
 			],
-			type: SchemeComponentTypes.GROUP
+			type: 'group'
 		},
 		{
 			id: 'group_02',
@@ -50,7 +49,7 @@ const rootComponent: SchemeComponent = {
 								{value: 'value_01', label: 'Значение 1'},
 								{value: 'value_02', label: 'Значение 2'}
 							],
-							type: SchemeComponentTypes.SELECT
+							type: 'select'
 						},
 						{
 							id: 'dynamicList_01',
@@ -61,21 +60,21 @@ const rootComponent: SchemeComponent = {
 									id: 'dynamicList_01-number_01',
 									label: 'Введите номер',
 									valueName: 'subItem_01',
-									type: SchemeComponentTypes.NUMBER
+									type: 'number'
 								},
 								{
 									id: 'dynamicList_01-checkbox_01',
 									label: 'Да/Нет',
 									valueName: 'subItem_02',
-									type: SchemeComponentTypes.CHECKBOX
+									type: 'checkbox'
 								},
 							],
 							allowAddRemove: true,
 							path: 'items',
-							type: SchemeComponentTypes.DYNAMIC_LIST
+							type: 'dynamicList'
 						}
 					],
-					type: SchemeComponentTypes.GROUP
+					type: 'group'
 				},
 				{
 					id: 'subGroup_02',
@@ -86,7 +85,8 @@ const rootComponent: SchemeComponent = {
 							valueName: 'tagList_01',
 							label: 'Список тегов',
 							allowAddRemove: true,
-							type: SchemeComponentTypes.TAG_LIST
+							readonly: true,
+							type: 'tagList'
 						},
 						{
 							id: 'textArea_01',
@@ -96,16 +96,16 @@ const rootComponent: SchemeComponent = {
 								minLength: 2,
 								required: true
 							},
-							type: SchemeComponentTypes.TEXT_AREA
+							type: 'textArea'
 						}
 					],
-					type: SchemeComponentTypes.GROUP
+					type: 'group'
 				}
 			],
-			type: SchemeComponentTypes.GROUP
+			type: 'group'
 		}
 	],
-	type: SchemeComponentTypes.GROUP
+	type: 'group'
 };
 
 const scheme: FormScheme = {

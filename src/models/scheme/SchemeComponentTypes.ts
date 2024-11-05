@@ -1,15 +1,1 @@
-export enum SchemeComponentTypes {
-	TEXT_FIELD = 'textField',
-	NUMBER = 'number',
-	TAG_LIST = 'tagList',
-	TEXT_AREA = 'textArea',
-	CHECKBOX = 'checkbox',
-	IMAGE = 'image',
-	GROUP = 'group',
-	DYNAMIC_LIST = 'dynamicList',
-	TEXT = 'text',
-	HTML = 'html',
-	DATE = 'date',
-	SELECT = 'select',
-	UNKNOWN = 'unknown',
-}
+export type SchemeComponentTypes = 'textField' | 'number' | 'tagList' | 'textArea' | 'checkbox' | 'image' | 'group' | 'dynamicList' | 'text' | 'html' | 'date' | 'select' | 'unknown';

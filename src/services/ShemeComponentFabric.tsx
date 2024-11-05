@@ -1,12 +1,10 @@
 import {SchemeComponent} from "@/models/scheme/SchemeComponent.ts";
-import {SchemeComponentTypes} from "@/models/scheme/SchemeComponentTypes.ts";
 import {Input, InputNumber, Typography} from "antd";
 import {
 	FabricException
 } from "@/helpers/exceptions/FabricException.ts";
 import {TagList} from "@/containers/formElements/TagList.tsx";
 import {imageWidth} from "@/config/parser.config.ts";
-// import {NoDefinedElement} from "@/content/forms/elements/stub/NoDefinedElement.tsx";
 import {DatePicker} from "@/containers/formElements/DatePicker.tsx";
 import {Checkbox} from "@/containers/formElements/Checkbox.tsx";
 import {Select} from "@/containers/formElements/Select.tsx";
@@ -17,7 +15,7 @@ const { Text } = Typography;
 export const SchemeComponentFabric = (component: SchemeComponent) => {
 	const {readonly} = component;
 	switch (component.type) {
-		case SchemeComponentTypes.TEXT_FIELD: {
+		case 'textField': {
 			const minLength = component?.validate?.minLength;
 			const maxLength = component?.validate?.maxLength;
 			return (
@@ -28,12 +26,13 @@ export const SchemeComponentFabric = (component: SchemeComponent) => {
 				/>
 			)
 		}
-		case SchemeComponentTypes.NUMBER: {
+		case 'number': {
 			const min = component?.validate?.min;
 			const max = component?.validate?.max;
 			const step = component?.validate?.step;
 			return (
 				<InputNumber
+					disabled={readonly}
 					style={{ width: '100%' }}
 					readOnly={readonly}
 					min={min ? min : undefined}
@@ -42,7 +41,7 @@ export const SchemeComponentFabric = (component: SchemeComponent) => {
 				/>
 			)
 		}
-		case SchemeComponentTypes.TEXT: {
+		case 'text': {
 			const {text} = component;
 			if (!text) {
 				throw FabricException('text');
@@ -52,13 +51,15 @@ export const SchemeComponentFabric = (component: SchemeComponent) => {
 				)
 			}
 		}
-		case SchemeComponentTypes.TEXT_AREA: return (
+		case 'textArea': return (
 			<Input.TextArea readOnly={readonly}/>
 		)
-		case SchemeComponentTypes.CHECKBOX: return (
-			<Checkbox disabled={readonly}/>
+		case 'checkbox': return (
+			<Checkbox
+				readOnly={readonly}
+			/>
 		)
-		case SchemeComponentTypes.SELECT: {
+		case'select': {
 			const {values, defaultValue} = component;
 			if (!values) {
 				throw FabricException('values');
@@ -71,16 +72,17 @@ export const SchemeComponentFabric = (component: SchemeComponent) => {
 				)
 			}
 		}
-		case SchemeComponentTypes.TAG_LIST: {
+		case 'tagList': {
 			const {allowAddRemove} = component;
 			return (
 				<TagList
 					allowAdd={allowAddRemove && allowAddRemove}
 					allowRemove={allowAddRemove && allowAddRemove}
+					readOnly={readonly}
 				/>
 			)
 		}
-		case SchemeComponentTypes.HTML: {
+		case 'html': {
 			const {content} = component;
 			if (!content) {
 				throw FabricException('content');
@@ -94,7 +96,7 @@ export const SchemeComponentFabric = (component: SchemeComponent) => {
 				)
 			}
 		}
-		case SchemeComponentTypes.IMAGE: {
+		case 'image': {
 			const {alt, source} = component;
 			if (!alt || !source) {
 				throw FabricException('alt | source');
@@ -108,7 +110,7 @@ export const SchemeComponentFabric = (component: SchemeComponent) => {
 				)
 			}
 		}
-		case SchemeComponentTypes.DATE: return (
+		case 'date': return (
 			<DatePicker/>
 		)
 		default: return (

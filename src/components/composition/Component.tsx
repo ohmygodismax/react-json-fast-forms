@@ -1,5 +1,4 @@
 import {SchemeComponent} from "@/models/scheme/SchemeComponent.ts";
-import {SchemeComponentTypes} from "@/models/scheme/SchemeComponentTypes.ts";
 import {SchemeComponentFabric} from "@/services/ShemeComponentFabric.tsx";
 import {SimpleComponent} from "@/containers/formComponents/SimpleComponent.tsx";
 import {FormItemComponent} from "@/containers/formComponents/FormItemComponent.tsx";
@@ -17,9 +16,9 @@ export const Component = ({path, component} : ComponentProps) => {
 
 	const renderComponent = () => {
 		switch (component.type) {
-			case SchemeComponentTypes.IMAGE:
-			case SchemeComponentTypes.TEXT:
-			case SchemeComponentTypes.HTML: {
+			case 'image':
+			case 'text':
+			case 'html': {
 				return (
 					<SimpleComponent>
 						{reactComponent}
