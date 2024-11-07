@@ -9,6 +9,8 @@ import {DatePicker} from "@/containers/formElements/DatePicker.tsx";
 import {Checkbox} from "@/containers/formElements/Checkbox.tsx";
 import {Select} from "@/containers/formElements/Select.tsx";
 import {NoDefinedElement} from "@/containers/formElements/NoDefinedElement.tsx";
+import {AsyncProvider} from "@/components/providers/AsyncProvider.tsx";
+import {FormItemProvider} from "@/components/providers/FormItemProvider.tsx";
 
 const { Text } = Typography;
 
@@ -60,16 +62,46 @@ export const SchemeComponentFabric = (component: SchemeComponent) => {
 			/>
 		)
 		case'select': {
-			const {values, defaultValue} = component;
-			if (!values) {
+			const {values, defaultValue, async, multiple, placeholder} = component;
+			if (!values && !async) {
 				throw FabricException('values');
 			} else {
-				return (
-					<Select
-						_defaultValue={defaultValue}
-						options={values}
-					/>
-				)
+				if (async) {
+					return (
+						<FormItemProvider
+							render={(value, onChange) => (
+								<AsyncProvider
+									config={async}
+									render={({values, isLoading, error}) => (
+										<Select
+											options={values}
+											loading={isLoading}
+											hasError={!!error}
+
+											_defaultValue={defaultValue}
+											placeholder={placeholder}
+											disabled={!values || values.length === 0}
+											isMultiple={multiple}
+
+											value={value}
+											onChange={onChange}
+										/>
+									)}
+								/>
+							)}
+						/>
+					)
+				} else {
+					return (
+						<Select
+							_defaultValue={defaultValue}
+							options={values}
+							placeholder={placeholder}
+							disabled={!values || values.length === 0}
+							isMultiple={multiple}
+						/>
+					)
+				}
 			}
 		}
 		case 'tagList': {
