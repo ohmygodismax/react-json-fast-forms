@@ -1,4 +1,6 @@
 import {SchemeComponentTypes} from "@/models/scheme/SchemeComponentTypes.ts";
+import {AsyncConfig} from "@/models/scheme/AsyncConfig.ts";
+import {Value} from "@/models/scheme/Value.ts";
 
 export type SchemeComponent = {
 	id: string,
@@ -11,11 +13,13 @@ export type SchemeComponent = {
 	alt?: string, //Image
 	source?: string, //Image
 	text?:string,
-	values?: {label: string, value: string}[], //Select
+	values?: Value[], //Select
 	path?: string, //Dynamic List,
 	defaultRepetitions?: number //Dynamic List
 	placeholder?: string,
 	allowAddRemove?: boolean, //Dynamic List
+	async?: AsyncConfig,
+	multiple?: boolean,
 	validate?: Partial<{
 		min?: number,
 		max?: number,
