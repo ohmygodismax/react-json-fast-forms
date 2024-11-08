@@ -1,4 +1,4 @@
-type JSONFunction = {
+export type JSONFunction = {
 	arguments: string,
 	body: string
 }

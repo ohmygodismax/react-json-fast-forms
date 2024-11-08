@@ -1,6 +1,7 @@
 export {FormConfiguration} from "@/components/FormConfiguration.tsx";
 export {DynamicForm} from "@/components/DynamicForm.tsx";
 
+export type {FormConfig} from "@/models/FormConfig";
 export type {FormScheme} from "@/models/scheme/FormScheme";
 export type {SchemeComponent} from "@/models/scheme/SchemeComponent";
 export type {SchemeComponentTypes} from "@/models/scheme/SchemeComponentTypes";

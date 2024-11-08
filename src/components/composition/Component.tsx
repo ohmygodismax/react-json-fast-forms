@@ -3,6 +3,8 @@ import {SchemeComponentFabric} from "@/services/ShemeComponentFabric.tsx";
 import {SimpleComponent} from "@/containers/formComponents/SimpleComponent.tsx";
 import {FormItemComponent} from "@/containers/formComponents/FormItemComponent.tsx";
 import {useMemo} from "react";
+import useFormInstance from "antd/es/form/hooks/useFormInstance";
+import {useWatch} from "antd/es/form/Form";
 
 interface ComponentProps {
 	path?: string,
@@ -10,9 +12,12 @@ interface ComponentProps {
 }
 
 export const Component = ({path, component} : ComponentProps) => {
+	const form = useFormInstance();
+	const state = useWatch([], form);
+
 	const reactComponent = useMemo(() => {
-		return SchemeComponentFabric(component)
-	}, [component]);
+		return SchemeComponentFabric(component, state)
+	}, [component, state]);
 
 	const renderComponent = () => {
 		switch (component.type) {

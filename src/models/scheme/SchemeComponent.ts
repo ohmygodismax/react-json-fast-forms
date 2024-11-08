@@ -1,5 +1,5 @@
 import {SchemeComponentTypes} from "@/models/scheme/SchemeComponentTypes.ts";
-import {AsyncConfig} from "@/models/scheme/AsyncConfig.ts";
+import {AsyncConfig, JSONFunction} from "@/models/scheme/AsyncConfig.ts";
 import {Value} from "@/models/scheme/Value.ts";
 
 export type SchemeComponent = {
@@ -20,6 +20,7 @@ export type SchemeComponent = {
 	allowAddRemove?: boolean, //Dynamic List
 	async?: AsyncConfig,
 	multiple?: boolean,
+	activeCondition?: JSONFunction,
 	validate?: Partial<{
 		min?: number,
 		max?: number,

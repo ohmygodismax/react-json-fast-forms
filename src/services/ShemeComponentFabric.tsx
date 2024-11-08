@@ -13,10 +13,11 @@ import {AsyncProvider} from "@/components/providers/AsyncProvider.tsx";
 import {FormItemProvider} from "@/components/providers/FormItemProvider.tsx";
 import { Radio } from "@/containers/formElements/Radio";
 import {Switcher} from "@/containers/formElements/Switcher.tsx";
+import {FormState} from "@/models/FormState.ts";
 
 const { Text } = Typography;
 
-export const SchemeComponentFabric = (component: SchemeComponent) => {
+export const SchemeComponentFabric = (component: SchemeComponent, state: FormState) => {
 	const {readonly} = component;
 	switch (component.type) {
 		case 'textField': {
@@ -63,11 +64,19 @@ export const SchemeComponentFabric = (component: SchemeComponent) => {
 				readOnly={readonly}
 			/>
 		)
-		case'select': {
-			const {values, defaultValue, async, multiple, placeholder} = component;
+		case 'select': {
+			const {values, defaultValue, async, multiple, placeholder, activeCondition} = component;
 			if (!values && !async) {
 				throw FabricException('values');
 			} else {
+				let active = true;
+				if (activeCondition && state) {
+					if (activeCondition && state) {
+						const conditionFunction = new Function(activeCondition.arguments, activeCondition.body);
+						active = conditionFunction(state)
+					}
+				}
+
 				if (async) {
 					return (
 						<FormItemProvider
@@ -82,7 +91,7 @@ export const SchemeComponentFabric = (component: SchemeComponent) => {
 
 											_defaultValue={defaultValue}
 											placeholder={placeholder}
-											disabled={!values || values.length === 0}
+											disabled={!active || !values || values.length === 0}
 											isMultiple={multiple}
 
 											value={value}
@@ -99,7 +108,7 @@ export const SchemeComponentFabric = (component: SchemeComponent) => {
 							_defaultValue={defaultValue}
 							options={values}
 							placeholder={placeholder}
-							disabled={!values || values.length === 0}
+							disabled={!active || !values || values.length === 0}
 							isMultiple={multiple}
 						/>
 					)
