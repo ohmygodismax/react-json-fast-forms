@@ -1,7 +1,7 @@
 # react-json-fast-forms
 [![npm](https://img.shields.io/npm/v/react-json-fast-forms)](https://www.npmjs.com/package/react-hooks-worker)
 [![size](https://img.shields.io/bundlephobia/minzip/react-json-fast-forms)](https://bundlephobia.com/result?p=react-json-fast-forms)
-[![NPM Monthly Downloads](https://img.shields.io/npm/dm/snowflake-id.svg)](https://npmjs.com/react-json-fast-forms)
+[![NPM Monthly Downloads](https://img.shields.io/npm/dm/react-json-fast-forms.svg)](https://npmjs.com/react-json-fast-forms)
 
 ![react-json-fast-forms](media/react-json-fast-forms.png)
 
