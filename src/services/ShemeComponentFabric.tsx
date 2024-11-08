@@ -11,6 +11,7 @@ import {Select} from "@/containers/formElements/Select.tsx";
 import {NoDefinedElement} from "@/containers/formElements/NoDefinedElement.tsx";
 import {AsyncProvider} from "@/components/providers/AsyncProvider.tsx";
 import {FormItemProvider} from "@/components/providers/FormItemProvider.tsx";
+import { Radio } from "@/containers/formElements/Radio";
 
 const { Text } = Typography;
 
@@ -145,6 +146,18 @@ export const SchemeComponentFabric = (component: SchemeComponent) => {
 		case 'date': return (
 			<DatePicker/>
 		)
+		case 'radio': {
+			const {values} = component;
+			if (!values) {
+				throw FabricException('values');
+			} else {
+				return (
+					<Radio
+						options={values}
+					/>
+				)
+			}
+		}
 		default: return (
 			<NoDefinedElement/>
 		)
