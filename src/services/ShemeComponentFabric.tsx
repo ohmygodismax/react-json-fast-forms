@@ -165,12 +165,12 @@ export const SchemeComponentFabric = (component: SchemeComponent) => {
 			)
 		}
 		case 'divider': {
-			const {layout, placeholder} = component;
+			const {layout, label} = component;
 			return (
 				<Divider
 					orientation={layout?.align || 'center'}
 				>
-					{placeholder ? placeholder : ''}
+					{label ? label : ''}
 				</Divider>
 			)
 		}

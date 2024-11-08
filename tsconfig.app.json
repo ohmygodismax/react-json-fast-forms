@@ -9,6 +9,7 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "declarationDir": "dist",
+    "resolveJsonModule": true,
 
     /* Bundler mode */
     "moduleResolution": "Bundler",

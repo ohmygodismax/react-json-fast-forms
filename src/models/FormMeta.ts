@@ -1,6 +1,10 @@
 export type FormMeta = {
 	id?: string,
 	name?: string,
-	layout?: 'vertical' | 'horizontal' | 'inline',
+	layout?: {
+		align?: 'vertical' | 'horizontal' | 'inline',
+		wrapperCol?: number,
+		labelCol?: number
+	},
 	description?: string
 }

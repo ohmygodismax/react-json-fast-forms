@@ -36,7 +36,7 @@ export const Group = ({component}: GroupProps) => {
 		<Row
 			style={{width: '100%', padding: `${component.label ? '5px' : ''}`}}
 		>
-			{component.label && <GroupHeader label={component.label}/>}
+			{(component.label || component.label === '') && <GroupHeader label={component.label}/>}
 			<>
 				{component.layout?.isColumnLayout ?
 					<Flex vertical wrap
