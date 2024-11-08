@@ -12,6 +12,7 @@ import {NoDefinedElement} from "@/containers/formElements/NoDefinedElement.tsx";
 import {AsyncProvider} from "@/components/providers/AsyncProvider.tsx";
 import {FormItemProvider} from "@/components/providers/FormItemProvider.tsx";
 import { Radio } from "@/containers/formElements/Radio";
+import {Switcher} from "@/containers/formElements/Switcher.tsx";
 
 const { Text } = Typography;
 
@@ -157,6 +158,11 @@ export const SchemeComponentFabric = (component: SchemeComponent) => {
 					/>
 				)
 			}
+		}
+		case 'switcher': {
+			return (
+				<Switcher/>
+			)
 		}
 		default: return (
 			<NoDefinedElement/>
