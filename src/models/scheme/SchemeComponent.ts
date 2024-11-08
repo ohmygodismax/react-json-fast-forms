@@ -7,7 +7,7 @@ export type SchemeComponent = {
 	valueName?: string,
 	label?: string,
 	components?: SchemeComponent[], //Group
-	layout?: Partial<{columns: string | null, row: string, isColumnLayout: boolean | null}>,
+	layout?: Partial<{columns: string | null, row: string, isColumnLayout: boolean | null, align: 'left' | 'center' | 'right'}>,
 	readonly?: boolean,
 	content?: string, //HTML
 	alt?: string, //Image

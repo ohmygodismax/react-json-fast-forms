@@ -18,6 +18,7 @@ export const Component = ({path, component} : ComponentProps) => {
 		switch (component.type) {
 			case 'image':
 			case 'text':
+			case 'divider':
 			case 'html': {
 				return (
 					<SimpleComponent>

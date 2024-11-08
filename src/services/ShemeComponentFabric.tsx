@@ -1,5 +1,5 @@
 import {SchemeComponent} from "@/models/scheme/SchemeComponent.ts";
-import {Input, InputNumber, Typography} from "antd";
+import {Divider, Input, InputNumber, Typography} from "antd";
 import {
 	FabricException
 } from "@/helpers/exceptions/FabricException.ts";
@@ -162,6 +162,16 @@ export const SchemeComponentFabric = (component: SchemeComponent) => {
 		case 'switcher': {
 			return (
 				<Switcher/>
+			)
+		}
+		case 'divider': {
+			const {layout, placeholder} = component;
+			return (
+				<Divider
+					orientation={layout?.align || 'center'}
+				>
+					{placeholder ? placeholder : ''}
+				</Divider>
 			)
 		}
 		default: return (
