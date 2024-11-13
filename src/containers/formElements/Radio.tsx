@@ -1,5 +1,5 @@
 import {Radio as AntRadio, RadioChangeEvent} from "antd";
-import {Value} from "@/models/scheme/Value.ts";
+import {Value} from "@/models/scheme/component/parts/Value.ts";
 
 interface RadioProps {
 	value?: string,

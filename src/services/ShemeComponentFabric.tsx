@@ -1,4 +1,4 @@
-import {SchemeComponent} from "@/models/scheme/SchemeComponent.ts";
+import {ComponentScheme} from "@/models/scheme/component/ComponentScheme.ts";
 import {Divider, Input, InputNumber, Typography} from "antd";
 import {
 	FabricException
@@ -17,8 +17,9 @@ import {FormState} from "@/models/FormState.ts";
 
 const { Text } = Typography;
 
-export const SchemeComponentFabric = (component: SchemeComponent, state: FormState) => {
-	const {readonly} = component;
+export const SchemeComponentFabric = (component: ComponentScheme, state: FormState) => {
+	const readonly = component.available?.readonly
+
 	switch (component.type) {
 		case 'textField': {
 			const minLength = component?.validate?.minLength;
@@ -47,7 +48,7 @@ export const SchemeComponentFabric = (component: SchemeComponent, state: FormSta
 			)
 		}
 		case 'text': {
-			const {text} = component;
+			const text = component.render?.text;
 			if (!text) {
 				throw FabricException('text');
 			} else {
@@ -65,14 +66,22 @@ export const SchemeComponentFabric = (component: SchemeComponent, state: FormSta
 			/>
 		)
 		case 'select': {
-			const {values, defaultValue, async, multiple, placeholder, activeCondition} = component;
+			const {value, render, available, async} = component;
+			if (!value || !render) {
+				throw FabricException('select configs');
+			}
+
+			const {values, multiple, placeholder} = render;
+			const {defaultValue} = value;
+
+			const dependsConditions = available?.dependsConditions
 			if (!values && !async) {
 				throw FabricException('values');
 			} else {
 				let active = true;
-				if (activeCondition && state) {
-					if (activeCondition && state) {
-						const conditionFunction = new Function(activeCondition.arguments, activeCondition.body);
+				if (dependsConditions && state) {
+					if (dependsConditions && state) {
+						const conditionFunction = new Function(dependsConditions.arguments, dependsConditions.body);
 						active = conditionFunction(state)
 					}
 				}
@@ -116,17 +125,17 @@ export const SchemeComponentFabric = (component: SchemeComponent, state: FormSta
 			}
 		}
 		case 'tagList': {
-			const {allowAddRemove} = component;
+			const {render} = component;
 			return (
 				<TagList
-					allowAdd={allowAddRemove && allowAddRemove}
-					allowRemove={allowAddRemove && allowAddRemove}
+					allowAdd={render?.allowAddRemove || true}
+					allowRemove={render?.allowAddRemove || true}
 					readOnly={readonly}
 				/>
 			)
 		}
 		case 'html': {
-			const {content} = component;
+			const content = component.render?.content;
 			if (!content) {
 				throw FabricException('content');
 			} else {
@@ -140,7 +149,8 @@ export const SchemeComponentFabric = (component: SchemeComponent, state: FormSta
 			}
 		}
 		case 'image': {
-			const {alt, source} = component;
+			const alt = component.render?.alt;
+			const source = component.render?.source;
 			if (!alt || !source) {
 				throw FabricException('alt | source');
 			} else {
@@ -157,7 +167,7 @@ export const SchemeComponentFabric = (component: SchemeComponent, state: FormSta
 			<DatePicker/>
 		)
 		case 'radio': {
-			const {values} = component;
+			const values = component.render?.values;
 			if (!values) {
 				throw FabricException('values');
 			} else {
@@ -174,10 +184,11 @@ export const SchemeComponentFabric = (component: SchemeComponent, state: FormSta
 			)
 		}
 		case 'divider': {
-			const {layout, label} = component;
+			const align = component.layout?.align;
+			const label = component.render?.label;
 			return (
 				<Divider
-					orientation={layout?.align || 'center'}
+					orientation={align || 'center'}
 				>
 					{label ? label : ''}
 				</Divider>

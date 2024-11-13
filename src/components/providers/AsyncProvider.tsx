@@ -1,8 +1,8 @@
-import {AsyncConfig} from "@/models/scheme/AsyncConfig.ts";
+import {AsyncConfig} from "@/models/scheme/component/config/AsyncConfig.ts";
 import {ReactElement, useCallback, useEffect, useMemo, useState} from "react";
 import useFormInstance from "antd/es/form/hooks/useFormInstance";
 import {useWatch} from "antd/es/form/Form";
-import {Value} from "@/models/scheme/Value.ts";
+import {Value} from "@/models/scheme/component/parts/Value.ts";
 
 type ResultConfig = {
 	values: Value[] | undefined,

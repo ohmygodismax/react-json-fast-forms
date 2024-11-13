@@ -1,15 +1,17 @@
 import {createRoot} from 'react-dom/client'
 import {FormState} from "@/models/FormState.ts";
 import {FormScheme} from "@/models/scheme/FormScheme.ts";
-import {SchemeComponent} from "@/models/scheme/SchemeComponent.ts";
+import {ComponentScheme} from "@/models/scheme/component/ComponentScheme.ts";
 import {FormConfiguration} from "@/components/FormConfiguration.tsx";
 import {DynamicForm} from "@/components/DynamicForm.tsx";
 
-const rootComponent: SchemeComponent = {
+const rootComponent: ComponentScheme = {
 	id: 'root',
-	label: 'Группа 1',
+	render: {
+		label: 'Группа 1',
+	},
 	layout: {
-		isColumnLayout: true
+		direction: 'vertical'
 	},
 	components: [
 		{
@@ -17,14 +19,22 @@ const rootComponent: SchemeComponent = {
 			components: [
 				{
 					id: 'text_01',
-					valueName: 'text_01',
-					label: 'Введите текстовое значение',
+					value: {
+						valueName: 'text_01'
+					},
+					render: {
+						label: 'Введите текстовое значение',
+					},
 					type: 'textField'
 				},
 				{
 					id: 'date_01',
-					valueName: 'date_01',
-					label: 'Введите дату',
+					value: {
+						valueName: 'date_01'
+					},
+					render: {
+						label:  'Введите дату',
+					},
 					type: 'date'
 				}
 			],
@@ -32,45 +42,67 @@ const rootComponent: SchemeComponent = {
 		},
 		{
 			id: 'group_02',
-			label: 'Группа 2',
+			render: {
+				label: 'Группа 2',
+			},
 			components: [
 				{
 					id: 'subGroup_01',
-					label: 'Подгруппа 1',
+					render: {
+						label: 'Подгруппа 1',
+					},
 					components: [
 						{
 							id: 'select_01',
-							valueName: 'select_01',
-							label: 'Выберите из списка',
+							value: {
+								valueName: 'select_01',
+								defaultValue: 'value_01'
+							},
+							render: {
+								label: 'Выберите из списка',
+								values: [
+									{value: 'value_01', label: 'Значение 1'},
+									{value: 'value_02', label: 'Значение 2'}
+								]
+							},
 							validate: {
 								required: true,
 							},
-							values: [
-								{value: 'value_01', label: 'Значение 1'},
-								{value: 'value_02', label: 'Значение 2'}
-							],
 							type: 'select'
 						},
 						{
 							id: 'dynamicList_01',
-							label: 'Динамический лист',
-							defaultRepetitions: 1,
+							value: {
+								path: 'items',
+							},
+							render: {
+								label: 'Динамический лист',
+								defaultRepetitions: 1,
+								allowAddRemove: true,
+							},
 							components: [
 								{
 									id: 'dynamicList_01-number_01',
-									label: 'Введите номер',
-									valueName: 'subItem_01',
+									render: {
+										label: 'Введите номер',
+									},
+									value: {
+										valueName: 'subItem_01',
+									},
 									type: 'number'
 								},
 								{
 									id: 'dynamicList_01-checkbox_01',
-									label: 'Да/Нет',
-									valueName: 'subItem_02',
+									render: {
+										label: 'Да/Нет',
+									},
+									value: {
+										valueName: 'subItem_02',
+									},
 									type: 'checkbox'
 								},
 							],
-							allowAddRemove: true,
-							path: 'items',
+
 							type: 'dynamicList'
 						}
 					],
@@ -78,20 +110,32 @@ const rootComponent: SchemeComponent = {
 				},
 				{
 					id: 'subGroup_02',
-					label: 'Подгруппа 2',
+					render: {
+						label: 'Подгруппа 2',
+					},
 					components: [
 						{
 							id: 'tagList_01',
-							valueName: 'tagList_01',
-							label: 'Список тегов',
-							allowAddRemove: true,
-							readonly: true,
+							value: {
+								valueName: 'tagList_01',
+							},
+							render: {
+								label: 'Список тегов',
+								allowAddRemove: true,
+							},
+							available: {
+								readonly: true,
+							},
 							type: 'tagList'
 						},
 						{
 							id: 'textArea_01',
-							valueName: 'textArea_01',
-							label: 'Зона текста',
+							value: {
+								valueName: 'textArea_01',
+							},
+							render: {
+								label: 'Зона текста',
+							},
 							validate: {
 								minLength: 2,
 								required: true
@@ -109,7 +153,7 @@ const rootComponent: SchemeComponent = {
 };
 
 const scheme: FormScheme = {
-	component: rootComponent
+	content: rootComponent
 };
 
 const state: FormState = {
@@ -141,8 +185,10 @@ createRoot(document.getElementById('root')!).render(
 				}}
 			>
 				<DynamicForm
-					scheme={scheme}
-					state={state}
+					config={{
+						scheme: scheme,
+						state: state
+					}}
 					onFinish={handleFormFinish}
 				/>
 			</FormConfiguration>

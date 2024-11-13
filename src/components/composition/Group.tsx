@@ -1,11 +1,11 @@
 import {useEffect, useMemo} from "react";
-import {SchemeComponent} from "@/models/scheme/SchemeComponent.ts";
+import {ComponentScheme} from "@/models/scheme/component/ComponentScheme.ts";
 import {SchemeComponentParser} from "@/components/parser/SchemeComponentParser.tsx";
 import {GroupHeader} from "@/containers/GroupHeader.tsx";
 import {Flex, Row} from "antd";
 
 interface GroupProps {
-	component: SchemeComponent
+	component: ComponentScheme
 }
 
 export const Group = ({component}: GroupProps) => {
@@ -34,11 +34,11 @@ export const Group = ({component}: GroupProps) => {
 
 	return (
 		<Row
-			style={{width: '100%', padding: `${component.label ? '5px' : ''}`}}
+			style={{width: '100%', padding: `${component.render?.label ? '5px' : ''}`}}
 		>
-			{(component.label || component.label === '') && <GroupHeader label={component.label}/>}
+			{(component.render?.label) && <GroupHeader label={component.render?.label}/>}
 			<>
-				{component.layout?.isColumnLayout ?
+				{component.layout?.direction === 'vertical' ?
 					<Flex vertical wrap
 						style={{width: '100%'}}
 					>

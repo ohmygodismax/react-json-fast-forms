@@ -1,11 +1,11 @@
-import {SchemeComponent} from "@/models/scheme/SchemeComponent.ts";
+import {ComponentScheme} from "@/models/scheme/component/ComponentScheme.ts";
 import {useMemo} from "react";
 import {Group} from "@/components/composition/Group.tsx";
 import {DynamicList} from "@/components/composition/DynamicList.tsx";
 import {Component} from "@/components/composition/Component.tsx";
 
 interface SchemeComponentParserProps {
-	component: SchemeComponent
+	component: ComponentScheme
 }
 
 export const SchemeComponentParser = ({component}: SchemeComponentParserProps) => {

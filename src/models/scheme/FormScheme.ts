@@ -1,7 +1,7 @@
-import {SchemeComponent} from "@/models/scheme/SchemeComponent.ts";
+import {ComponentScheme} from "@/models/scheme/component/ComponentScheme.ts";
 
 export type FormScheme = {
-	content: SchemeComponent,
+	content: ComponentScheme,
 	schemeVersion?: string,
 	type?: string
 }

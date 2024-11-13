@@ -1,4 +1,4 @@
-import {SchemeComponent} from "@/models/scheme/SchemeComponent.ts";
+import {ComponentScheme} from "@/models/scheme/component/ComponentScheme.ts";
 import {SchemeComponentFabric} from "@/services/ShemeComponentFabric.tsx";
 import {SimpleComponent} from "@/containers/formComponents/SimpleComponent.tsx";
 import {FormItemComponent} from "@/containers/formComponents/FormItemComponent.tsx";
@@ -8,7 +8,7 @@ import {useWatch} from "antd/es/form/Form";
 
 interface ComponentProps {
 	path?: string,
-	component: SchemeComponent
+	component: ComponentScheme
 }
 
 export const Component = ({path, component} : ComponentProps) => {
@@ -33,7 +33,9 @@ export const Component = ({path, component} : ComponentProps) => {
 			}
 			default: {
 				const required = component.validate?.required;
-				const {valueName, label, readonly} = component;
+				const valueName = component.value?.valueName;
+				const label = component.render?.label;
+				const readonly = component.available?.readonly;
 				if (!valueName || valueName === '') {
 					throw new Error('ValueName is required');
 				}

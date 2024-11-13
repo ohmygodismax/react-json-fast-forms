@@ -1,28 +1,28 @@
 import {Button, Flex, Form} from "antd";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
-import {SchemeComponent} from "@/models/scheme/SchemeComponent.ts";
+import {ComponentScheme} from "@/models/scheme/component/ComponentScheme.ts";
 import {Component} from "@/components/composition/Component.tsx";
 import {GroupHeader} from "@/containers/GroupHeader.tsx";
 import {useEffect, useMemo} from "react";
 import useFormInstance from "antd/es/form/hooks/useFormInstance";
 
 interface DynamicListProps {
-	component: SchemeComponent
+	component: ComponentScheme
 }
 
 export const DynamicList = ({component}: DynamicListProps) => {
 	const form = useFormInstance();
 
 	const listValue = useMemo(() => {
-		return form.getFieldValue(component.path)
+		return form.getFieldValue(component.value?.path)
 	}, [form, component])
 
 	useEffect(() => { //TODO: Временное решение. Большая привязка к реализации tasklist-ui. Необходимо добавлять пустое значение в начальное состояние формы в парсере camunda-tasklist-ui.
-		const {defaultRepetitions} = component;
+		const defaultRepetitions = component.render?.defaultRepetitions;
 		if (defaultRepetitions && (!listValue || listValue.length < defaultRepetitions)) {
 			const {components} = component;
 			if (components) {
-				const componentsValueNames: Array<string | undefined> = components.map((component) => component.valueName);
+				const componentsValueNames: Array<string | undefined> = components.map((component) => component.value?.valueName);
 				const emptyItem: Record<string, undefined> = {};
 				componentsValueNames.forEach((valueName) => {
 					if (valueName) {
@@ -33,12 +33,12 @@ export const DynamicList = ({component}: DynamicListProps) => {
 				for (let i = 0; i < defaultRepetitions - listValue.length; i++) {
 					initialValue.push({...emptyItem});
 				}
-				form.setFieldValue(component.path, initialValue);
+				form.setFieldValue(component.value?.path, initialValue);
 			}
 		}
 	}, [listValue, component]);
 
-	const renderComponent = (name: string, subComponent: SchemeComponent) => {
+	const renderComponent = (name: string, subComponent: ComponentScheme) => {
 		return (
 			<Component path={name} component={subComponent}/>
 		)
@@ -59,8 +59,8 @@ export const DynamicList = ({component}: DynamicListProps) => {
 	}
 
 	const isMinusButtonRender = (listIndex: number) => {
-		if (component.allowAddRemove) {
-			const {defaultRepetitions} = component;
+		if (component.render?.allowAddRemove) {
+			const defaultRepetitions = component.render?.defaultRepetitions;
 			if (defaultRepetitions) {
 				return listIndex + 1 > defaultRepetitions;
 			} else {
@@ -72,7 +72,9 @@ export const DynamicList = ({component}: DynamicListProps) => {
 	}
 
 	const renderList = () => {
-		const {path, label, components} = component;
+		const components = component.components;
+		const path = component.value?.path;
+		const label = component.render?.label;
 		if (!path || !components) {
 			throw new Error('Path and Components is required!');
 		}
@@ -115,7 +117,7 @@ export const DynamicList = ({component}: DynamicListProps) => {
 										</Flex>
 									)
 								})}
-								{component.allowAddRemove &&
+								{component.render?.allowAddRemove &&
 									<Form.Item
 										style={{margin: 10}}
 									>
