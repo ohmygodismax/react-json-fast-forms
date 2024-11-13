@@ -8,8 +8,9 @@ export type AsyncConfig = {
 		intersectProcessing: JSONFunction //input: data, dependValues
 	},
 	fetch?: {
-		onInit: boolean,
-		conditionFromDepends: JSONFunction //input: dependValues
+		onInit?: boolean,
+		ifUndefined?: boolean,
+		conditionFromDepends?: JSONFunction //input: dependValues
 	}
 	depends?: Array<{
 		value: string,

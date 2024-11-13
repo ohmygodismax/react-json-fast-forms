@@ -2,10 +2,16 @@ import {AsyncConfig} from "@/models/scheme/component/config/AsyncConfig.ts";
 import {ReactElement, useCallback, useEffect, useMemo, useState} from "react";
 import useFormInstance from "antd/es/form/hooks/useFormInstance";
 import {useWatch} from "antd/es/form/Form";
-import {Value} from "@/models/scheme/component/parts/Value.ts";
+import {JSONFunction} from "@/models/scheme/component/parts/JSONFunction.ts";
+
+type OutputData = {
+	data: object
+	value: string | undefined,
+	label: string | undefined,
+}[] | null
 
 type ResultConfig = {
-	values: Value[] | undefined,
+	data: OutputData,
 	isLoading: boolean,
 	error: string | null
 }
@@ -17,55 +23,56 @@ interface AsyncProviderProps {
 
 export const AsyncProvider = ({config, render}: AsyncProviderProps) => {
 	const form = useFormInstance();
-	const watchedValues = useWatch((values) => {
-		const dependsValues = config.dependsValues.map((value) => {
-			return typeof value === 'string' ? value : value[0]
-		});
-		const filteredValues: typeof values = {};
-		for (const key in values) {
-			if (dependsValues.includes(key)) {
-				filteredValues[key] = values[key];
+
+	const watchedValues = useWatch((values) => { //Достаем наблюдаемые свойства из состояния формы
+		const dependsValues = config.depends?.map((item) => item.value);
+		let watchedValues: typeof values | null = null;
+		if (dependsValues) {
+			watchedValues = {};
+			for (const key in values) {
+				if (dependsValues.includes(key)) {
+					watchedValues[key] = values[key];
+				}
 			}
 		}
-		return filteredValues
+		return watchedValues
 	}, form);
 
-	const [asyncData, setAsyncData] = useState();
+	const [asyncData, setAsyncData] = useState<object[] | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const fetchVariables = useMemo(() => {
-		if (config.dependsValues.length !== 0 && watchedValues) {
-			const values: Record<string, string | undefined> = {};
-			config.dependsValues.forEach((valueName) => {
-				if (typeof valueName === "string") {
-					values[valueName] = watchedValues[valueName];
-				} else {
-					values[valueName[1]] = watchedValues[valueName[0]];
-				}
-			})
-			return values
-		}
-	}, [config.dependsValues, watchedValues]);
-
-	useEffect(() => {
-		if (fetchVariables) {
-			const isAllVariablesUndefined = Object.values(fetchVariables).every((variable) => variable === undefined);
-			if (isAllVariablesUndefined) {
-				if (config.fetchIfUndefined) {
-					fetchData();
-				}
+	const fetchVariables = useMemo(() => { //Обработываем наблюдаемые значение, при необходимости оборачиваем переменные в прочие названия
+		if (watchedValues) {
+			const dependValues = config.depends;
+			if (dependValues) {
+				const wrappedValues: Record<string, string | undefined> = {};
+				dependValues.forEach((item) => {
+					const {value, wrappedAsyncValue} = item;
+					wrappedValues[wrappedAsyncValue ? wrappedAsyncValue : value] = watchedValues[value];
+				})
 			} else {
+				return watchedValues
+			}
+		}
+	}, [config, watchedValues]);
+
+	useEffect(() => { //Проверяем переменные на undefined и конфигурацию на параметр ifUndefined перед запросом
+		if (fetchVariables) {
+			const isAllValuesUndefined = Object.values(fetchVariables).every((variable) => variable === undefined);
+			if (!isAllValuesUndefined) {
+				fetchData();
+			} else if (config.fetch?.ifUndefined) {
 				fetchData();
 			}
 		}
-	}, [config.fetchIfUndefined, fetchVariables]);
+	}, [config, fetchVariables]);
 
-	useEffect(() => {
-		if (config.fetchOnInit && config.fetchIfUndefined) {
+	useEffect(() => { //При необходимости запрашиваем данные при инициализации
+		if (config.fetch?.onInit && config.fetch?.ifUndefined) {
 			fetchData();
 		}
-	}, [config.fetchOnInit, config.fetchIfUndefined]);
+	}, [config]);
 
 	const fetchData = useCallback(() => {
 		setIsLoading(true);
@@ -96,46 +103,58 @@ export const AsyncProvider = ({config, render}: AsyncProviderProps) => {
 			})
 	}, [config, watchedValues])
 
-	const values = useMemo(() => {
-		let data: object[] | undefined = asyncData;
-		if (asyncData && config.extractDataFunction) {
-			const extractDataFunction = new Function(config.extractDataFunction.arguments, config.extractDataFunction.body);
-			const extractData = extractDataFunction(asyncData);
-			if (config.filterByDependent && fetchVariables) {
-				const filterFunction = new Function(config.filterByDependent.arguments, config.filterByDependent.body);
-				const values = config.dependsValues.map((value) => {
-					let valueName: string;
-					if (typeof value === 'string') {
-						valueName = value;
-					} else {
-						valueName = value[1]
-					}
-					return fetchVariables[valueName]
-				})
+	const createFunctionFromJSON = (json: JSONFunction): Function => {
+		return new Function(json.arguments, json.body);
+	}
 
-				data = filterFunction(values, extractData)
-			} else {
-				data = extractData;
+	const outputData = useMemo(() => { //Обрабатываем полученные данные
+		let data: OutputData = null;
+
+		const intersectFunctionScheme = config.data?.intersectProcessing;
+		const valueFunctionScheme = config.extractors?.value;
+		const labelFunctionScheme = config.extractors?.label;
+
+		if (asyncData) {
+			if (intersectFunctionScheme) {
+				const dataProcess = (createFunctionFromJSON(intersectFunctionScheme));
+				data = dataProcess(asyncData, watchedValues);
+			}
+
+			if (!Array.isArray(data) || !data) {
+				throw new Error('After the request and processing, there should be an array')
+			}
+
+			data = data.map((item) => ({
+				data: item,
+				value: undefined,
+				label: undefined
+			}))
+
+			if (valueFunctionScheme) {
+				const valueExtractor = createFunctionFromJSON(valueFunctionScheme);
+				console.log(data);
+				data = data.map((item) => ({
+					...item,
+					value: valueExtractor(item)
+				}))
+			}
+
+			if (labelFunctionScheme) {
+				const labelExtractor = createFunctionFromJSON(labelFunctionScheme);
+				data = data.map((item) => ({
+					...item,
+					label: labelExtractor(item)
+				}))
 			}
 		}
 
-		const extractValueFunction = new Function(config.extractValueFunction.arguments, config.extractValueFunction.body);
-		const extractLabelFunction = new Function(config.extractLabelFunction.arguments, config.extractLabelFunction.body);
-
-		if (data) {
-			return data.map((item: object) => {
-				return {
-					value: extractValueFunction(item),
-					label: extractLabelFunction(item)
-				}
-			})
-		}
-	}, [config, asyncData, fetchVariables]);
+		return data
+	}, [config, asyncData, watchedValues, fetchVariables]);
 
 	return (
 		<>
 			{render({
-				values: values,
+				data: outputData,
 				isLoading: isLoading,
 				error: error,
 			})}
