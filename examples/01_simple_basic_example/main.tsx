@@ -7,15 +7,19 @@ import {DynamicForm} from "@/components/DynamicForm.tsx";
 
 const rootComponent: ComponentScheme = {
 	id: 'root',
-	render: {
-		label: 'Группа 1',
-	},
+
 	layout: {
 		direction: 'vertical'
 	},
 	components: [
 		{
 			id: 'group_01',
+			layout: {
+				direction: 'horizontal',
+			},
+			render: {
+				label: 'Группа 1',
+			},
 			components: [
 				{
 					id: 'text_01',
@@ -186,6 +190,11 @@ createRoot(document.getElementById('root')!).render(
 			>
 				<DynamicForm
 					config={{
+						meta: {
+							layout: {
+								align: 'vertical'
+							}
+						},
 						scheme: scheme,
 						state: state
 					}}
