@@ -7,13 +7,13 @@ interface SelectProps {
 	disabled?: boolean,
 	onChange?: (value: string | undefined) => void,
 	loading?: boolean,
-	hasError?: boolean,
+	error?: string | null,
 	isMultiple?: boolean,
 	placeholder?: string,
 	_defaultValue?: string,
 }
 
-export const Select = ({options, value, disabled, _defaultValue, loading = false, isMultiple = false, placeholder = '', hasError = false, onChange}: SelectProps) => {
+export const Select = ({options, value, disabled, _defaultValue, loading = false, isMultiple = false, placeholder = '', error = null, onChange}: SelectProps) => {
 	useEffect(() => {
 		if (onChange && _defaultValue && !value) {
 			onChange(_defaultValue);
@@ -33,8 +33,8 @@ export const Select = ({options, value, disabled, _defaultValue, loading = false
 			options={options}
 			onChange={onChange}
 			loading={loading}
-			placeholder={placeholder !== '' ? placeholder : undefined}
-			status={hasError ? 'warning' : undefined}
+			placeholder={placeholder || undefined}
+			status={error ? 'error' : undefined}
 			mode={isMultiple ? 'multiple': undefined}
 		/>
 	)

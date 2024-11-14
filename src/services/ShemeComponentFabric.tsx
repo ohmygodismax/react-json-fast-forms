@@ -9,11 +9,12 @@ import {DatePicker} from "@/containers/formElements/DatePicker.tsx";
 import {Checkbox} from "@/containers/formElements/Checkbox.tsx";
 import {Select} from "@/containers/formElements/Select.tsx";
 import {NoDefinedElement} from "@/containers/formElements/NoDefinedElement.tsx";
-import {AsyncProvider} from "@/components/providers/AsyncProvider.tsx";
-import {FormItemProvider} from "@/components/providers/FormItemProvider.tsx";
+import {AsyncDataProvider} from "@/components/async/AsyncDataProvider.tsx";
+import {FormItemProvider} from "@/components/form/FormItemProvider.tsx";
 import { Radio } from "@/containers/formElements/Radio";
 import {Switcher} from "@/containers/formElements/Switcher.tsx";
 import {FormState} from "@/models/FormState.ts";
+import {AsyncSelectAdapter} from "@/components/async/AsyncSelectAdapter.tsx";
 
 const { Text } = Typography;
 
@@ -74,7 +75,7 @@ export const SchemeComponentFabric = (component: ComponentScheme, state: FormSta
 			const {values, multiple, placeholder} = render;
 			const {defaultValue} = value;
 
-			const dependsConditions = available?.dependsConditions
+			const dependsConditions = available?.dependsCondition
 			if (!values && !async) {
 				throw FabricException('values');
 			} else {
@@ -90,21 +91,26 @@ export const SchemeComponentFabric = (component: ComponentScheme, state: FormSta
 					return (
 						<FormItemProvider
 							render={(value, onChange) => (
-								<AsyncProvider
+								<AsyncDataProvider
 									config={async}
-									render={({values, isLoading, error}) => (
-										<Select
-											options={values}
-											loading={isLoading}
-											hasError={!!error}
+									render={({data, isLoading, error}) => (
+										<AsyncSelectAdapter
+											data={data}
+											render={(options) => (
+												<Select
+													options={options}
+													loading={isLoading}
+													error={error}
 
-											_defaultValue={defaultValue}
-											placeholder={placeholder}
-											disabled={!active || !values || values.length === 0}
-											isMultiple={multiple}
+													_defaultValue={defaultValue}
+													placeholder={placeholder}
+													disabled={!active || !options || options.length === 0}
+													isMultiple={multiple}
 
-											value={value}
-											onChange={onChange}
+													value={value}
+													onChange={onChange}
+												/>
+											)}
 										/>
 									)}
 								/>
@@ -188,6 +194,7 @@ export const SchemeComponentFabric = (component: ComponentScheme, state: FormSta
 			const label = component.render?.label;
 			return (
 				<Divider
+
 					orientation={align || 'center'}
 				>
 					{label ? label : ''}

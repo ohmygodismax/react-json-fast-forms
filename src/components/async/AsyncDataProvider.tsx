@@ -4,14 +4,14 @@ import useFormInstance from "antd/es/form/hooks/useFormInstance";
 import {useWatch} from "antd/es/form/Form";
 import {JSONFunction} from "@/models/scheme/component/parts/JSONFunction.ts";
 
-type OutputData = {
+export type AsyncData = {
 	data: object
 	value: string | undefined,
 	label: string | undefined,
 }[] | null
 
 type ResultConfig = {
-	data: OutputData,
+	data: AsyncData,
 	isLoading: boolean,
 	error: string | null
 }
@@ -21,7 +21,7 @@ interface AsyncProviderProps {
 	render: (config: ResultConfig) => ReactElement
 }
 
-export const AsyncProvider = ({config, render}: AsyncProviderProps) => {
+export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 	const form = useFormInstance();
 
 	const watchedValues = useWatch((values) => { //Достаем наблюдаемые свойства из состояния формы
@@ -51,6 +51,7 @@ export const AsyncProvider = ({config, render}: AsyncProviderProps) => {
 					const {value, wrappedAsyncValue} = item;
 					wrappedValues[wrappedAsyncValue ? wrappedAsyncValue : value] = watchedValues[value];
 				})
+				return wrappedValues
 			} else {
 				return watchedValues
 			}
@@ -92,8 +93,11 @@ export const AsyncProvider = ({config, render}: AsyncProviderProps) => {
 			}
 		)
 			.then((res) => res.json())
-			.then((data) => {
-				setAsyncData(data.data);
+			.then((json) => {
+				if (json.errors && json.errors.length !== 0) {
+					throw new Error('Ошибка при выполнении запроса')
+				}
+				setAsyncData(json.data);
 			})
 			.catch((error) => {
 				setError(error);
@@ -103,12 +107,12 @@ export const AsyncProvider = ({config, render}: AsyncProviderProps) => {
 			})
 	}, [config, watchedValues])
 
-	const createFunctionFromJSON = (json: JSONFunction): Function => {
+	const createFunctionFromJSON = (json: JSONFunction) => {
 		return new Function(json.arguments, json.body);
 	}
 
 	const outputData = useMemo(() => { //Обрабатываем полученные данные
-		let data: OutputData = null;
+		let data: AsyncData = null;
 
 		const intersectFunctionScheme = config.data?.intersectProcessing;
 		const valueFunctionScheme = config.extractors?.value;
@@ -132,10 +136,9 @@ export const AsyncProvider = ({config, render}: AsyncProviderProps) => {
 
 			if (valueFunctionScheme) {
 				const valueExtractor = createFunctionFromJSON(valueFunctionScheme);
-				console.log(data);
 				data = data.map((item) => ({
 					...item,
-					value: valueExtractor(item)
+					value: valueExtractor(item.data)
 				}))
 			}
 
@@ -143,13 +146,13 @@ export const AsyncProvider = ({config, render}: AsyncProviderProps) => {
 				const labelExtractor = createFunctionFromJSON(labelFunctionScheme);
 				data = data.map((item) => ({
 					...item,
-					label: labelExtractor(item)
+					label: labelExtractor(item.data)
 				}))
 			}
 		}
 
 		return data
-	}, [config, asyncData, watchedValues, fetchVariables]);
+	}, [config, asyncData, watchedValues]);
 
 	return (
 		<>
