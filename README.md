@@ -28,26 +28,77 @@ yarn add react-json-fast-forms
 
 ## Component scheme props
 
-| Property                  | Type        | Description                                                        | Supported components   | Required? | 
-|---------------------------|-------------|--------------------------------------------------------------------|------------------------|:---------:|
-| `id`                      | String      | The unique identifier of the component                             | ***                    |     ✓     |
-| `valueName`               | String      | The designation of the reference to the state property of the form | *Form Item*            |           |
-| `label`                   | String      | The displayed description of the component                         | *Form Item*            |           |
-| `components`              | Array       | List of child components                                           | Group, Dynamic List    |           |
-| `layout`                  | Object      | Layout settings                                                    | Group                  |           |
-| `readonly`                | Boolean     | Read-only attribute                                                | *Form Item*            |           |
-| `content`                 | String      | Component content                                                  | HTML                   |           |
-| `alt`                     | String      | Image description                                                  | Image                  |           |
-| `source`                  | String      | Link to the resource                                               | Image                  |           |
-| `text`                    | String      | The content of the text, including MD                              | Text                   |           |
-| `values`                  | Array       | List of values                                                     | Select, Radio          |           |
-| `path`                    | String      | The path to the form property                                      | Dynamic List           |           |
-| `defaultRepetitions`      | Number      | The number of displayed items                                      | Dynamic List           |           |
-| `placeholder`             | String      | Component placeholder                                              | Select                 |           |
-| `allowAddRemove`          | Boolean     | Support for changes                                                | Dynamic List, Tag List |           |
-| `validate`                | Object      | Validation rules                                                   | *Form Item*            |           |
-| `defaultValue`            | String      | The default value                                                  | Select                 |           |
-| `type`                    | String      | Type of component                                                  | ***                    |     ✓     |
+| Property             | Type          | Description                                                        | Required? | 
+|----------------------|---------------|--------------------------------------------------------------------|-----------|
+| `id`                 | String        | The unique identifier of the component                             |     ✓     |
+| `value`              | Object Config | The designation of the reference to the state property of the form |           |
+| `render`             | Object Config | The displayed description of the component                         |           |
+| `available`          | Object Config | List of child components                                           |           |
+| `layout`             | Object Config | Layout settings                                                    |           |
+| `async`              | Object Config | Read-only attribute                                                |           |
+| `validate`           | Object Config | Component content                                                  |           |
+| `components`         | String        | Image description                                                  |           |
+| `type`               | String        | Type of component                                                  |     ✓     |
+
+## Component scheme config
+
+### Value
+| Property       | Type         | Description | Required? | 
+|----------------|--------------|-------------|-----------|
+| `valueName`    | String       |             |           |
+| `defaultValue` | String       |             |           |
+| `path`         | String       |             |           |
+
+### Render
+| Property               | Type    | Description | Required? | 
+|------------------------|---------|-------------|-----------|
+| `label`                | String  |             |           |
+| `values`               | Value   |             |           |
+| `placeholder`          | String  |             |           |
+| `multiple`             | Boolean |             |           |
+| `content`              | String  |             |           |
+| `alt`                  | String  |             |           |
+| `source`               | String  |             |           |
+| `text`                 | String  |             |           |
+| `defaultRepetitions`   | Number  |             |           |
+| `allowAddRemove`       | Boolean |             |           |
+
+### Available
+| Property                | Type          | Description | Required? | 
+|-------------------------|---------------|-------------|-----------|
+| `readonly`              | String        |             |           |
+| `dependsCondition`      | JSON Function |             |           |
+
+### Layout
+| Property        | Type                      | Description | Required? | 
+|-----------------|---------------------------|-------------|-----------|
+| `labelCol`      | Number                    |             |           |
+| `direction`     | vertical  \| horizontal   |             |           |
+| `align`         | left \| center \| right   |             |           |
+
+
+### Async
+| Property             | Type                                                                         | Description | Required? | 
+|----------------------|------------------------------------------------------------------------------|-------------|-----------|
+| `type`               | fetch\/post \| fetch\/get \| gql                                             |             |           |
+| `url`                | String                                                                       |             |           |
+| `query`              | String                                                                       |             |           |
+| `data`               | {intersectProcessing: JSON Function}                                         |             |           |
+| `fetch`              | {onInit: Boolean, ifUndefined: Boolean, conditionFromDepends: JSON Function} |             |           |
+| `depends`            | Array\<\{value: String, path: String \| String\[\]\}\>                       |             |           |
+| `extractors`         | {value: JSON Function, label: JSON Function}                                 |             |           |
+
+### Validate
+| Property              | Type          | Description | Required? | 
+|-----------------------|---------------|-------------|-----------|
+| `required`            | Boolean       |             |           |
+| `validateFunc`        | JSON Function |             |           |
+| `min`                 | Number        |             |           |
+| `max`                 | Number        |             |           |
+| `step`                | Number        |             |           |
+| `textReq`             | String        |             |           |
+| `minLength`           | Number        |             |           |
+| `maxLength`           | Number        |             |           |
 
 #### Examples
 
