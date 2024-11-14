@@ -1,0 +1,120 @@
+{
+  "meta": {
+    "layout": {
+      "align": "horizontal"
+    }
+  },
+  "state": {
+    "radio_1": "02",
+    "switcher_1": true
+  },
+  "scheme": {
+    "content": {
+      "id": "root",
+      "layout": {
+        "direction": "vertical"
+      },
+      "components": [
+        {
+          "id": "configGroup",
+          "render": {
+            "label": "Настройки"
+          },
+          "components": [
+            {
+              "id": "availableSwitcher",
+              "value": {
+                "valueName": "availableSwitcher"
+              },
+              "render": {
+                "label": "Доступность выпадающиего списка"
+              },
+              "type": "switcher"
+            }
+          ],
+          "type": "group"
+        },
+        {
+          "id": "selectGroup",
+          "layout": {
+            "direction": "vertical"
+          },
+          "render": {
+            "label": "Ассинхронные списки"
+          },
+          "components": [
+            {
+              "id": "select_02",
+              "value": {
+                "valueName": "swEpisodesIds"
+              },
+              "available": {
+                "dependsCondition": {"arguments": "state", "body": "return state.availableSwitcher"}
+              },
+              "render": {
+                "label": "Эпизоды звездных воин (Асинхронный список)",
+                "placeholder": "Выберите значение...",
+                "multiple": true
+              },
+              "async": {
+                "type": "gql",
+                "url": "https://swapi-graphql.netlify.app/.netlify/functions/index",
+                "query": "query AllFilms {allFilms {edges {node {title episodeID}}}}",
+                "data": {
+                  "intersectProcessing": {"arguments":"data", "body": "return data.allFilms.edges;"}
+                },
+                "fetch": {
+                  "onInit": true,
+                  "ifUndefined": true
+                },
+                "extractors": {
+                  "value": {"arguments":"item", "body":"return item.node.episodeID;"},
+                  "label": {"arguments":"item", "body":"return item.node.title;"}
+                }
+              },
+              "type": "select"
+            },
+            {
+              "id": "select_03",
+              "value": {
+                "valueName": "select_03"
+              },
+              "render": {
+                "label": "Персонажы из выбранных эпиздов (Асинхронный список - зависимый)",
+                "placeholder": "Выберите значение...",
+                "multiple": true
+              },
+              "available": {
+                "dependsCondition": {"arguments": "state", "body": "return state.availableSwitcher"}
+              },
+              "async": {
+                "type": "gql",
+                "url": "https://swapi-graphql.netlify.app/.netlify/functions/index",
+                "query": "query AllPeople {allPeople {edges {node {name id filmConnection(first:1){edges{node{episodeID}}}}}}}",
+                "fetch": {
+                  "onInit": false,
+                  "ifUndefined": false
+                },
+                "data": {
+                  "intersectProcessing": {"arguments":"data, values", "body": "return data.allPeople.edges.filter((item) => values.swEpisodesIds.includes(item.node.filmConnection.edges[0].node.episodeID));"}
+                },
+                "depends": [
+                  {
+                    "value": "swEpisodesIds"
+                  }
+                ],
+                "extractors": {
+                  "value": {"arguments":"item", "body":"return item.node.id;"},
+                  "label": {"arguments":"item", "body":"return item.node.name;"}
+                }
+              },
+              "type": "select"
+            }
+          ],
+          "type": "group"
+        }
+      ],
+      "type": "group"
+    }
+  }
+}
