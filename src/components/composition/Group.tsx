@@ -2,7 +2,7 @@ import {useEffect, useMemo} from "react";
 import {ComponentScheme} from "@/models/scheme/component/ComponentScheme.ts";
 import {SchemeComponentParser} from "@/components/parser/SchemeComponentParser.tsx";
 import {GroupHeader} from "@/containers/GroupHeader.tsx";
-import {Flex, Row} from "antd";
+import {Flex} from "antd";
 
 interface GroupProps {
 	component: ComponentScheme
@@ -22,10 +22,11 @@ export const Group = ({component}: GroupProps) => {
 		}
 		return (
 			<>
-				{components.map((component) => (
+				{components.map((innerComponent) => (
 					<SchemeComponentParser
-						key={component.id}
-						component={component}
+						key={innerComponent.id}
+						component={innerComponent}
+						group={component}
 					/>
 				))}
 			</>
@@ -33,24 +34,18 @@ export const Group = ({component}: GroupProps) => {
 	}, [component])
 
 	return (
-		<Row
-			style={{width: '100%', padding: `${component.render?.label ? '5px' : ''}`}}
+		<Flex vertical
+			style={{padding: 5}}
 		>
 			{(component.render?.label) && <GroupHeader label={component.render?.label}/>}
-			<>
-				{component.layout?.direction === 'vertical' ?
-					<Flex vertical wrap
-						style={{width: '100%'}}
-					>
-						{groupComponent}
-					</Flex> :
-					<Flex
-						style={{width: '100%'}}
-					>
-						{groupComponent}
-					</Flex>
-				}
-			</>
-		</Row>
+			{component.layout?.direction === 'vertical' ?
+				<Flex vertical>
+					{groupComponent}
+				</Flex> :
+				<Flex>
+					{groupComponent}
+				</Flex>
+			}
+		</Flex>
 	)
 }

@@ -8,10 +8,11 @@ import {useWatch} from "antd/es/form/Form";
 
 interface ComponentProps {
 	path?: string,
+	group?: ComponentScheme,
 	component: ComponentScheme
 }
 
-export const Component = ({path, component} : ComponentProps) => {
+export const Component = ({path, component, group} : ComponentProps) => {
 	const form = useFormInstance();
 	const state = useWatch([], form);
 
@@ -39,9 +40,11 @@ export const Component = ({path, component} : ComponentProps) => {
 				if (!valueName || valueName === '') {
 					throw new Error('ValueName is required');
 				}
+
 				return (
 					<FormItemComponent
 						name={path ? [path, valueName] : valueName}
+						labelCol={component.layout?.labelCol || group?.layout?.labelCol}
 						label={label}
 						isRequired={required}
 						readOnly={readonly}

@@ -1,6 +1,5 @@
 export type LayoutConfig = {
-	columns?: string,
-	row?: string,
+	labelCol?: number
 	direction?: 'vertical' | 'horizontal',
 	align?: 'left' | 'center' | 'right'
 }
