@@ -131,20 +131,7 @@ const handleFormFinish = (state: FormState) => {
 };
 
 createRoot(document.getElementById('root')!).render(
-		<>
-			<FormConfiguration
-				designToken={{
-					colorBgBase: '#e4e4e4',
-					colorTextBase: '#000000',
-					colorPrimaryBg: '#ac1b1b',
-					colorPrimary: '#0a21b8'
-				}}
-			>
-				<DynamicForm
-					scheme={scheme}
-					state={state}
-					onFinish={handleFormFinish}
-				/>
-			</FormConfiguration>
-		</>
+		<div>wewewe
+
+		</div>
 )
