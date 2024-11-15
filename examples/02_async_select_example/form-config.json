@@ -40,7 +40,7 @@
             "direction": "vertical"
           },
           "render": {
-            "label": "Ассинхронные списки"
+            "label": "GQL-запросы"
           },
           "components": [
             {
@@ -61,7 +61,7 @@
                 "url": "https://swapi-graphql.netlify.app/.netlify/functions/index",
                 "query": "query AllFilms {allFilms {edges {node {title episodeID}}}}",
                 "data": {
-                  "intersectProcessing": {"arguments":"data", "body": "return data.allFilms.edges;"}
+                  "intersectProcessing": {"arguments":"data", "body": "return data.data.allFilms.edges;"}
                 },
                 "fetch": {
                   "onInit": true,
@@ -77,7 +77,7 @@
             {
               "id": "select_03",
               "value": {
-                "valueName": "select_03"
+                "valueName": "swPeoples"
               },
               "render": {
                 "label": "Персонажы из выбранных эпиздов (Асинхронный список - зависимый)",
@@ -96,7 +96,7 @@
                   "ifUndefined": false
                 },
                 "data": {
-                  "intersectProcessing": {"arguments":"data, values", "body": "return data.allPeople.edges.filter((item) => values.swEpisodesIds.includes(item.node.filmConnection.edges[0].node.episodeID));"}
+                  "intersectProcessing": {"arguments":"data, values", "body": "return data.data.allPeople.edges.filter((item) => values.swEpisodesIds.includes(item.node.filmConnection.edges[0].node.episodeID));"}
                 },
                 "depends": [
                   {
@@ -112,6 +112,44 @@
             }
           ],
           "type": "group"
+        },
+        {
+          "id": "sdf",
+          "render": {
+            "label": "REST-запросы"
+          },
+          "components": [
+            {
+              "id": "select_04",
+              "value": {
+                "valueName": "swPlanet"
+              },
+              "render": {
+                "label": "Планета из звездных воин (Асинхронный список)"
+              },
+              "available": {
+                "dependsCondition": {"arguments": "state", "body": "return state.availableSwitcher"}
+              },
+              "async": {
+                "query": "fetch/get",
+                "url": "https://swapi.dev/api/planets",
+                "data": {
+                  "intersectProcessing": {"arguments":"data", "body": "return data.results;"}
+                },
+                "fetch": {
+                  "onInit": true,
+                  "ifUndefined": true
+                },
+                "extractors": {
+                  "value": {"arguments":"item", "body":"return item.name;"},
+                  "label": {"arguments":"item", "body":"return item.name;"}
+                }
+              },
+              "type": "select"
+            }
+          ],
+          "type": "group"
+
         }
       ],
       "type": "group"

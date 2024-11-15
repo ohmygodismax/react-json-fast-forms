@@ -86,10 +86,10 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 					'Content-Type': "application/json",
 					'Accept': "application/json",
 				},
-				body: JSON.stringify({
+				body: config.type === 'gql' ? JSON.stringify({
 					query: config.query,
 					variables: fetchVariables
-				})
+				}) : undefined
 			}
 		)
 			.then((res) => res.json())
@@ -97,7 +97,7 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 				if (json.errors && json.errors.length !== 0) {
 					throw new Error('Ошибка при выполнении запроса')
 				}
-				setAsyncData(json.data);
+				setAsyncData(json);
 			})
 			.catch((error) => {
 				setError(error);
