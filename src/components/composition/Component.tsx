@@ -45,7 +45,9 @@ export const Component = ({path, component, group} : ComponentProps) => {
 					<FormItemComponent
 						name={path ? [path, valueName] : valueName}
 						labelCol={component.layout?.labelCol || group?.layout?.labelCol}
+						wrapperCol={component.layout?.wrapperCol || group?.layout?.wrapperCol}
 						label={label}
+						direction={component.layout?.direction}
 						isRequired={required}
 						readOnly={readonly}
 					>

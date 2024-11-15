@@ -86,7 +86,7 @@ export const DynamicList = ({component}: DynamicListProps) => {
 				{(fields, {add, remove}) => {
 					return (
 						(
-							<div>
+							<Flex vertical>
 								{label && <GroupHeader label={label}/>}
 								{fields.map((_, name) => {
 									return (
@@ -100,6 +100,7 @@ export const DynamicList = ({component}: DynamicListProps) => {
 													{components.map((component) => (
 														<div
 															key={`${component.id}-${name}`}
+															style={{width: '100%'}}
 														>
 															{renderComponent(`${name}`, component)}
 														</div>
@@ -107,11 +108,14 @@ export const DynamicList = ({component}: DynamicListProps) => {
 												</>
 											}
 											{
-												isMinusButtonRender(name) &&
 												<Flex
-													style={{marginLeft: 10}}
+													style={{width: '20px'}}
 												>
-													{renderMinusButton(() => remove(name))}
+													{isMinusButtonRender(name) &&
+														<>
+															{renderMinusButton(() => remove(name))}
+														</>
+													}
 												</Flex>
 											}
 										</Flex>
@@ -124,7 +128,7 @@ export const DynamicList = ({component}: DynamicListProps) => {
 										{renderAddBlock((() => add()))}
 									</Form.Item>
 								}
-							</div>
+							</Flex>
 						)
 					)
 				}}

@@ -22,6 +22,8 @@ export const DynamicForm = ({config, onChange, onFinish, isDisabled = false, sub
 		<Form
 			form={form}
 			layout={config.meta?.layout?.align || 'vertical'}
+			labelCol={config?.meta?.layout?.labelCol || undefined}
+			wrapperCol={config.meta?.layout?.wrapperCol || undefined}
 			labelAlign={'left'}
 			initialValues={config.state}
 			onFinish={onFinish}

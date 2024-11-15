@@ -26,6 +26,9 @@ const rootComponent: ComponentScheme = {
 					value: {
 						valueName: 'text_01'
 					},
+					layout: {
+						wrapperCol: {span: 10}
+					},
 					render: {
 						label: 'Введите текстовое значение',
 					},
@@ -62,6 +65,9 @@ const rootComponent: ComponentScheme = {
 								valueName: 'select_01',
 								defaultValue: 'value_01'
 							},
+							layout: {
+								direction: 'horizontal',
+							},
 							render: {
 								label: 'Выберите из списка',
 								values: [
@@ -97,6 +103,9 @@ const rootComponent: ComponentScheme = {
 								},
 								{
 									id: 'dynamicList_01-checkbox_01',
+									layout: {
+										align: 'center'
+									},
 									render: {
 										label: 'Да/Нет',
 									},
