@@ -20,6 +20,7 @@ createRoot(document.getElementById('root')!).render(
 				}}
 			>
 				<DynamicForm
+					name={'async_select_example'}
 					config={formConfig as FormConfig}
 					onFinish={handleFormFinish}
 				/>

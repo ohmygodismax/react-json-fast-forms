@@ -197,6 +197,7 @@ createRoot(document.getElementById('root')!).render(
 				}}
 			>
 				<DynamicForm
+					name={'simple-basic-form'}
 					config={{
 						meta: {
 							layout: {

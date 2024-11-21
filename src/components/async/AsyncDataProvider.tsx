@@ -1,8 +1,9 @@
 import {AsyncConfig} from "@/models/scheme/component/config/AsyncConfig.ts";
-import {ReactElement, useCallback, useEffect, useMemo, useState} from "react";
+import {ReactElement, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import useFormInstance from "antd/es/form/hooks/useFormInstance";
 import {useWatch} from "antd/es/form/Form";
 import {JSONFunction} from "@/models/scheme/component/parts/JSONFunction.ts";
+import {DynamicFormContext} from "@/providers/DynamicFormProvider.tsx";
 
 export type AsyncData = {
 	data: object
@@ -38,6 +39,8 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 		}
 		return watchedValues
 	}, form);
+
+	const formConfig = useContext(DynamicFormContext);
 
 	const [asyncData, setAsyncData] = useState<object[] | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
@@ -82,14 +85,23 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 	const fetchData = useCallback(() => {
 		setIsLoading(true);
 		setError('');
+		const headers: HeadersInit = {
+			'Content-Type': "application/json",
+			'Accept': "application/json",
+		};
+
+		if (formConfig) {
+			const accessToken = formConfig.getToken('access');
+			if (accessToken) {
+				headers['Authorization'] = `Bearer ${accessToken}`;
+			}
+		}
+
 		fetch(
 			config.url,
 			{
 				method: config.type === 'fetch/post' || config.type === 'gql' ? 'POST' : 'GET',
-				headers: {
-					'Content-Type': "application/json",
-					'Accept': "application/json",
-				},
+				headers,
 				body: config.type === 'gql' ? JSON.stringify({
 					query: config.query,
 					variables: fetchVariables
@@ -109,7 +121,7 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 			.finally(() => {
 				setIsLoading(false);
 			})
-	}, [])
+	}, [formConfig])
 
 	const createFunctionFromJSON = (json: JSONFunction) => {
 		return new Function(json.arguments, json.body);
