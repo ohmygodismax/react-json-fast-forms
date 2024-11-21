@@ -138,17 +138,27 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 			if (intersectFunctionScheme) {
 				const dataProcess = (createFunctionFromJSON(intersectFunctionScheme));
 				data = dataProcess(asyncData, watchedValues);
-			}
 
-			if (!Array.isArray(data) || !data) {
-				throw new Error('After the request and processing, there should be an array')
-			}
+				if (!Array.isArray(data) || !data) {
+					throw new Error('After the request and processing, there should be an array')
+				}
 
-			data = data.map((item) => ({
-				data: item,
-				value: undefined,
-				label: undefined
-			}))
+				data = data.map((item) => ({
+					data: item,
+					value: undefined,
+					label: undefined
+				}))
+			} else {
+				if (!Array.isArray(asyncData)) {
+					throw new Error('After the request and processing, there should be an array')
+				}
+
+				data = asyncData.map((item) => ({
+					data: item,
+					value: undefined,
+					label: undefined
+				}))
+			}
 
 			if (valueFunctionScheme) {
 				const valueExtractor = createFunctionFromJSON(valueFunctionScheme);
