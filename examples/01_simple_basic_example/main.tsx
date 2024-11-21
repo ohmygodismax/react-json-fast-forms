@@ -7,7 +7,6 @@ import {DynamicForm} from "@/components/DynamicForm.tsx";
 
 const rootComponent: ComponentScheme = {
 	id: 'root',
-
 	layout: {
 		direction: 'vertical'
 	},

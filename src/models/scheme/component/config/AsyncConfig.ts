@@ -5,12 +5,10 @@ export type AsyncConfig = {
 	url: string,
 	query: string,
 	data?: {
-		intersectProcessing: JSONFunction //input: data, dependValues
+		intersectProcessing: JSONFunction //input: data, state
 	},
 	fetch?: {
-		onInit?: boolean,
-		ifUndefined?: boolean,
-		conditionFromDepends?: JSONFunction //input: dependValues
+		dependsCondition?: JSONFunction //input: state
 	}
 	depends?: Array<{
 		value: string,

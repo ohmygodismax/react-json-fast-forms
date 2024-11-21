@@ -6,7 +6,8 @@
   },
   "state": {
     "radio_1": "02",
-    "switcher_1": true
+    "switcher_1": true,
+    "availableSwitcher": false
   },
   "scheme": {
     "content": {
@@ -64,8 +65,7 @@
                   "intersectProcessing": {"arguments":"data", "body": "return data.data.allFilms.edges;"}
                 },
                 "fetch": {
-                  "onInit": true,
-                  "ifUndefined": true
+                  "dependsCondition": {"arguments": "state", "body": "return state.availableSwitcher"}
                 },
                 "extractors": {
                   "value": {"arguments":"item", "body":"return item.node.episodeID;"},
@@ -92,8 +92,7 @@
                 "url": "https://swapi-graphql.netlify.app/.netlify/functions/index",
                 "query": "query AllPeople {allPeople {edges {node {name id filmConnection(first:1){edges{node{episodeID}}}}}}}",
                 "fetch": {
-                  "onInit": false,
-                  "ifUndefined": false
+                  "dependsCondition": {"arguments": "state", "body": "return state.availableSwitcher && !!state.swEpisodesIds"}
                 },
                 "data": {
                   "intersectProcessing": {"arguments":"data, values", "body": "return data.data.allPeople.edges.filter((item) => values.swEpisodesIds.includes(item.node.filmConnection.edges[0].node.episodeID));"}
@@ -125,20 +124,20 @@
                 "valueName": "swPlanet"
               },
               "render": {
-                "label": "Планета из звездных воин (Асинхронный список)"
+                "label": "Планета из звездных воин (Асинхронный список)",
+                "placeholder": "Выберите значение..."
               },
               "available": {
                 "dependsCondition": {"arguments": "state", "body": "return state.availableSwitcher"}
               },
               "async": {
-                "query": "fetch/get",
+                "type": "fetch/get",
                 "url": "https://swapi.dev/api/planets",
                 "data": {
                   "intersectProcessing": {"arguments":"data", "body": "return data.results;"}
                 },
                 "fetch": {
-                  "onInit": true,
-                  "ifUndefined": true
+                  "dependsCondition": {"arguments": "state", "body": "return state.availableSwitcher"}
                 },
                 "extractors": {
                   "value": {"arguments":"item", "body":"return item.name;"},

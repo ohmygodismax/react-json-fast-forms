@@ -24,6 +24,7 @@ interface AsyncProviderProps {
 export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 	const form = useFormInstance();
 
+	const state = useWatch([], form);
 	const watchedValues = useWatch((values) => { //Достаем наблюдаемые свойства из состояния формы
 		const dependsValues = config.depends?.map((item) => item.value);
 		let watchedValues: typeof values | null = null;
@@ -58,22 +59,25 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 		}
 	}, [config, watchedValues]);
 
-	useEffect(() => { //Проверяем переменные на undefined и конфигурацию на параметр ifUndefined перед запросом
-		if (fetchVariables) {
-			const isAllValuesUndefined = Object.values(fetchVariables).every((variable) => variable === undefined);
-			if (!isAllValuesUndefined) {
-				fetchData();
-			} else if (config.fetch?.ifUndefined) {
-				fetchData();
-			}
-		}
-	}, [config, fetchVariables]);
-
-	useEffect(() => { //При необходимости запрашиваем данные при инициализации
-		if (config.fetch?.onInit && config.fetch?.ifUndefined) {
+	useEffect(() => {
+		if (checkForDependsCondition(state) && !asyncData) {
 			fetchData();
 		}
-	}, [config]);
+	}, [config, state, fetchVariables]);
+
+	const checkForDependsCondition = useCallback((_state: typeof state) => {
+		const dependsFunctionScheme = config.fetch?.dependsCondition;
+		if (dependsFunctionScheme) {
+			if (_state) {
+				const dependsCondition = createFunctionFromJSON(dependsFunctionScheme);
+				return !!dependsCondition(_state);
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
+	}, [config])
 
 	const fetchData = useCallback(() => {
 		setIsLoading(true);
@@ -94,9 +98,9 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 		)
 			.then((res) => res.json())
 			.then((json) => {
-				if (json.errors && json.errors.length !== 0) {
-					throw new Error('Ошибка при выполнении запроса')
-				}
+				// if (json.errors && json.errors.length !== 0) {
+				// 	throw new Error('Ошибка при выполнении запроса')
+				// }
 				setAsyncData(json);
 			})
 			.catch((error) => {
@@ -105,7 +109,7 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 			.finally(() => {
 				setIsLoading(false);
 			})
-	}, [config, watchedValues])
+	}, [])
 
 	const createFunctionFromJSON = (json: JSONFunction) => {
 		return new Function(json.arguments, json.body);
