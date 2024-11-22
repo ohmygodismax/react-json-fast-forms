@@ -92,10 +92,11 @@
                 "url": "https://swapi-graphql.netlify.app/.netlify/functions/index",
                 "query": "query AllPeople {allPeople {edges {node {name id filmConnection(first:1){edges{node{episodeID}}}}}}}",
                 "fetch": {
-                  "dependsCondition": {"arguments": "state", "body": "return state.availableSwitcher && !!state.swEpisodesIds"}
+                  "dependsCondition": {"arguments": "state", "body": "return state.availableSwitcher && !!state.swEpisodesIds"},
+                  "watchedVariables": ["swEpisodesIds"]
                 },
                 "data": {
-                  "intersectProcessing": {"arguments":"data, values", "body": "return data.data.allPeople.edges.filter((item) => values.swEpisodesIds.includes(item.node.filmConnection.edges[0].node.episodeID));"}
+                  "intersectProcessing": {"arguments":"data, state", "body": "return data.data.allPeople.edges.filter((item) => state.swEpisodesIds.includes(item.node.filmConnection.edges[0].node.episodeID));"}
                 },
                 "depends": [
                   {

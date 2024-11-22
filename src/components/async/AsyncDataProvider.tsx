@@ -5,14 +5,14 @@ import {useWatch} from "antd/es/form/Form";
 import {JSONFunction} from "@/models/scheme/component/parts/JSONFunction.ts";
 import {DynamicFormContext} from "@/providers/DynamicFormProvider.tsx";
 
-export type AsyncData = {
+export type OutputData = {
 	data: object
 	value: string | undefined,
 	label: string | undefined,
 }[] | null
 
 type ResultConfig = {
-	data: AsyncData,
+	data: OutputData,
 	isLoading: boolean,
 	error: string | null
 }
@@ -22,23 +22,25 @@ interface AsyncProviderProps {
 	render: (config: ResultConfig) => ReactElement
 }
 
-export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
+export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => { //TODO: Очень большой компонент. Когда определится вся бизнес-логика разбить на небольшие функциональные компоненты.
 	const form = useFormInstance();
 
-	const state = useWatch([], form);
-	const watchedValues = useWatch((values) => { //Достаем наблюдаемые свойства из состояния формы
-		const dependsValues = config.depends?.map((item) => item.value);
-		let watchedValues: typeof values | null = null;
-		if (dependsValues) {
-			watchedValues = {};
-			for (const key in values) {
-				if (dependsValues.includes(key)) {
-					watchedValues[key] = values[key];
-				}
-			}
-		}
-		return watchedValues
-	}, form);
+	const state = useWatch([], form); //Общее состояние формы
+
+	const watchedVariables = useWatch((values) => { //Только переменные, которые определены как наблюдаемые (для повторного запроса данных)
+		 const watchedVariables = config.fetch?.watchedVariables;
+		 if (watchedVariables) {
+			 const watchedObject: typeof values = {};
+			 watchedVariables.forEach((variable) => {
+				 if (values[variable]) {
+					 watchedObject[variable] = values[variable];
+				 }
+			 });
+			 return watchedObject
+		 } else {
+			 return null
+		 }
+	})
 
 	const formConfig = useContext(DynamicFormContext);
 
@@ -46,43 +48,49 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const fetchVariables = useMemo(() => { //Обработываем наблюдаемые значение, при необходимости оборачиваем переменные в прочие названия
-		if (watchedValues) {
-			const dependValues = config.depends;
-			if (dependValues) {
-				const wrappedValues: Record<string, string | undefined> = {};
-				dependValues.forEach((item) => {
-					const {value, wrappedAsyncValue} = item;
-					wrappedValues[wrappedAsyncValue ? wrappedAsyncValue : value] = watchedValues[value];
-				})
-				return wrappedValues
-			} else {
-				return watchedValues
-			}
-		}
-	}, [config, watchedValues]);
-
-	useEffect(() => {
-		if (checkForDependsCondition(state) && !asyncData) {
-			fetchData();
-		}
-	}, [config, state, fetchVariables]);
-
-	const checkForDependsCondition = useCallback((_state: typeof state) => {
+	const checkForFetchAvailability = useCallback(() => {
 		const dependsFunctionScheme = config.fetch?.dependsCondition;
 		if (dependsFunctionScheme) {
-			if (_state) {
+			if (state) {
 				const dependsCondition = createFunctionFromJSON(dependsFunctionScheme);
-				return !!dependsCondition(_state);
+				return !!dependsCondition(state);
 			} else {
 				return false;
 			}
 		} else {
 			return true;
 		}
-	}, [config])
+	}, [state, config])
 
-	const fetchData = useCallback(() => {
+	const prepareFetchData = useCallback(() => {
+		const stateToFetchVariablesFunctionScheme = config.fetch?.stateToFetchVariables;
+		if (stateToFetchVariablesFunctionScheme) {
+			const stateToFetchVariablesFunction = createFunctionFromJSON(stateToFetchVariablesFunctionScheme);
+			return stateToFetchVariablesFunction(state);
+		} else {
+			return null
+		}
+	}, [state, config])
+
+	useEffect(() => {
+		if (!config.fetch?.watchedVariables && state && !isLoading && !asyncData) {
+				if (checkForFetchAvailability()) {
+					const data = prepareFetchData();
+					fetchData(data);
+				}
+		}
+	}, [state, config]);
+
+	useEffect(() => {
+		if (watchedVariables) {
+			if (checkForFetchAvailability()) {
+				const data = prepareFetchData();
+				fetchData(data);
+			}
+		}
+	}, [watchedVariables, config]);
+
+	const fetchData = useCallback((data: object) => {
 		setIsLoading(true);
 		setError('');
 		const headers: HeadersInit = {
@@ -104,7 +112,7 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 				headers,
 				body: config.type === 'gql' ? JSON.stringify({
 					query: config.query,
-					variables: fetchVariables
+					variables: data || undefined
 				}) : undefined
 			}
 		)
@@ -127,8 +135,8 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 		return new Function(json.arguments, json.body);
 	}
 
-	const outputData = useMemo(() => { //Обрабатываем полученные данные
-		let data: AsyncData = null;
+	const generateOutputData = useCallback((asyncData: object[]) => {
+		let outputData: OutputData = null;
 
 		const intersectFunctionScheme = config.data?.intersectProcessing;
 		const valueFunctionScheme = config.extractors?.value;
@@ -137,13 +145,13 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 		if (asyncData) {
 			if (intersectFunctionScheme) {
 				const dataProcess = (createFunctionFromJSON(intersectFunctionScheme));
-				data = dataProcess(asyncData, watchedValues);
+				outputData = dataProcess(asyncData, state);
 
-				if (!Array.isArray(data) || !data) {
+				if (!Array.isArray(outputData) || !outputData) {
 					throw new Error('After the request and processing, there should be an array')
 				}
 
-				data = data.map((item) => ({
+				outputData = outputData.map((item) => ({
 					data: item,
 					value: undefined,
 					label: undefined
@@ -153,7 +161,7 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 					throw new Error('After the request and processing, there should be an array')
 				}
 
-				data = asyncData.map((item) => ({
+				outputData = asyncData.map((item) => ({
 					data: item,
 					value: undefined,
 					label: undefined
@@ -162,7 +170,7 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 
 			if (valueFunctionScheme) {
 				const valueExtractor = createFunctionFromJSON(valueFunctionScheme);
-				data = data.map((item) => ({
+				outputData = outputData.map((item) => ({
 					...item,
 					value: valueExtractor(item.data)
 				}))
@@ -170,20 +178,27 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => {
 
 			if (labelFunctionScheme) {
 				const labelExtractor = createFunctionFromJSON(labelFunctionScheme);
-				data = data.map((item) => ({
+				outputData = outputData.map((item) => ({
 					...item,
 					label: labelExtractor(item.data)
 				}))
 			}
 		}
 
-		return data
-	}, [config, asyncData, watchedValues]);
+		return outputData
+	}, [config, state])
+
+	const outputData = useMemo(() => {
+		if (asyncData) {
+			return generateOutputData(asyncData)
+		}
+	}, [asyncData, config])
+
 
 	return (
 		<>
 			{render({
-				data: outputData,
+				data: outputData || [],
 				isLoading: isLoading,
 				error: error,
 			})}

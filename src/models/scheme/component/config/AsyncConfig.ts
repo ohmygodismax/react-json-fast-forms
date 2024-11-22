@@ -5,10 +5,12 @@ export type AsyncConfig = {
 	url: string,
 	query: string,
 	data?: {
-		intersectProcessing: JSONFunction //input: data, state
+		intersectProcessing?: JSONFunction //input: data, state //TODO: Подумать над названием и местом в конфигурации.
 	},
 	fetch?: {
-		dependsCondition?: JSONFunction //input: state
+		dependsCondition?: JSONFunction //input: state TODO: Переименовать когда определится полная структура
+		stateToFetchVariables?: JSONFunction//input: state. Convert state to fetch variables
+		watchedVariables?: string[] //ReFetch only if variables value change
 	}
 	depends?: Array<{
 		value: string,

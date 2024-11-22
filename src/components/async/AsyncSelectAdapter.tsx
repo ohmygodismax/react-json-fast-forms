@@ -1,9 +1,9 @@
-import {AsyncData} from "@/components/async/AsyncDataProvider.tsx";
+import {OutputData} from "@/components/async/AsyncDataProvider.tsx";
 import {ReactElement, useMemo} from "react";
 import {FabricException} from "@/helpers/exceptions/FabricException.ts";
 
 interface AsyncSelectAdapterProps {
-	data: AsyncData,
+	data: OutputData,
 	render: (options: {value: string, label: string}[]) => ReactElement
 }
 
