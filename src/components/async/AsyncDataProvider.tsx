@@ -1,5 +1,5 @@
 import {AsyncConfig} from "@/models/scheme/component/config/AsyncConfig.ts";
-import {ReactElement, useCallback, useContext, useEffect, useMemo, useState} from "react";
+import {ReactElement, useCallback, useContext, useEffect, useState} from "react";
 import useFormInstance from "antd/es/form/hooks/useFormInstance";
 import {useWatch} from "antd/es/form/Form";
 import {JSONFunction} from "@/models/scheme/component/parts/JSONFunction.ts";
@@ -44,6 +44,8 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => { //T
 
 	const formConfig = useContext(DynamicFormContext);
 
+	const [outputData, setOutputData] = useState<OutputData>([]);
+
 	const [asyncData, setAsyncData] = useState<object[] | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -86,6 +88,8 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => { //T
 			if (checkForFetchAvailability()) {
 				const data = prepareFetchData();
 				fetchData(data);
+			} else {
+				setOutputData([]);
 			}
 		}
 	}, [watchedVariables, config]);
@@ -188,17 +192,17 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => { //T
 		return outputData
 	}, [config, state])
 
-	const outputData = useMemo(() => {
+	useEffect(() => {
 		if (asyncData) {
-			return generateOutputData(asyncData)
+			setOutputData(generateOutputData(asyncData))
 		}
-	}, [asyncData, config])
+	}, [asyncData, config]);
 
 
 	return (
 		<>
 			{render({
-				data: outputData || [],
+				data: outputData,
 				isLoading: isLoading,
 				error: error,
 			})}
