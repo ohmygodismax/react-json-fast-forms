@@ -34,6 +34,22 @@ const rootComponent: ComponentScheme = {
 					type: 'textField'
 				},
 				{
+					id: 'dateRange_01',
+					value: {
+						valueName: 'dateRange_01'
+					},
+					render: {
+						label: 'Выберите диапазон',
+						rangePresets: {
+							prevMonth: true,
+							curMonth: true,
+							prevWeek: true,
+							prevQuarter: true
+						}
+					},
+					type: 'dateRange'
+				},
+				{
 					id: 'date_01',
 					value: {
 						valueName: 'date_01'

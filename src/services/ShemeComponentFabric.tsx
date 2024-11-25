@@ -15,6 +15,7 @@ import { Radio } from "@/containers/formElements/Radio";
 import {Switcher} from "@/containers/formElements/Switcher.tsx";
 import {FormState} from "@/models/FormState.ts";
 import {AsyncSelectAdapter} from "@/components/async/AsyncSelectAdapter.tsx";
+import {RangePicker} from "@/containers/formElements/RangePicker.tsx";
 
 const { Text } = Typography;
 
@@ -172,6 +173,14 @@ export const SchemeComponentFabric = (component: ComponentScheme, state: FormSta
 		case 'date': return (
 			<DatePicker/>
 		)
+		case 'dateRange': {
+			const rangePresets = component.render?.rangePresets;
+			return (
+				<RangePicker
+					rangePresets={rangePresets}
+				/>
+			)
+		}
 		case 'radio': {
 			const values = component.render?.values;
 			if (!values) {
