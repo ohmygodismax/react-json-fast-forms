@@ -28,7 +28,7 @@
                 "valueName": "availableSwitcher"
               },
               "render": {
-                "label": "Доступность выпадающиего списка"
+                "label": "Доступность выпадающего списка"
               },
               "type": "switcher"
             }
@@ -98,11 +98,6 @@
                 "data": {
                   "intersectProcessing": {"arguments":"data, state", "body": "return data.data.allPeople.edges.filter((item) => state.swEpisodesIds.includes(item.node.filmConnection.edges[0].node.episodeID));"}
                 },
-                "depends": [
-                  {
-                    "value": "swEpisodesIds"
-                  }
-                ],
                 "extractors": {
                   "value": {"arguments":"item", "body":"return item.node.id;"},
                   "label": {"arguments":"item", "body":"return item.node.name;"}
