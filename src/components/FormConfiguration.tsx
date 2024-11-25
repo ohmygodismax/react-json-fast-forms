@@ -1,6 +1,7 @@
 import {ReactElement, useMemo} from "react";
 import {Locale} from "antd/es/locale";
 import {App, ConfigProvider} from "antd";
+import ru_RU from "antd/locale/ru_RU";
 
 interface FormConfigurationProps {
 	locale?: Locale,
@@ -29,7 +30,7 @@ export const FormConfiguration = ({locale, designToken, children}: FormConfigura
 
 	return (
 		<ConfigProvider
-			locale={locale}
+			locale={locale || ru_RU}
 			theme={{
 				token: token
 			}}
