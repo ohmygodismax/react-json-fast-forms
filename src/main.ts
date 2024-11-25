@@ -1,6 +1,11 @@
 export {FormConfiguration} from "@/components/FormConfiguration.tsx";
 export {DynamicForm} from "@/components/DynamicForm.tsx";
 
+export {SelectBuilder} from "@/modules/builder/sheme/implements/items/SelectBuilder.ts";
+export {GroupSchemeBuilder} from "@/modules/builder/sheme/implements/GroupSchemeBuilder.ts";
+export {FetchAsyncConfigBuilder} from "@/modules/builder/config/implements/FetchAsyncConfigBuilder.ts";
+export {GQLAsyncConfigBuilder} from "@/modules/builder/config/implements/GQLAsyncConfigBuilder.ts";
+
 export type {FormConfig} from "@/models/FormConfig";
 export type {FormScheme} from "@/models/scheme/FormScheme";
 export type {ComponentScheme} from "@/models/scheme/component/ComponentScheme.ts";
