@@ -175,9 +175,11 @@ export const SchemeComponentFabric = (component: ComponentScheme, state: FormSta
 		)
 		case 'dateRange': {
 			const rangePresets = component.render?.rangePresets;
+			const format = component.render?.format;
 			return (
 				<RangePicker
 					rangePresets={rangePresets}
+					format={format}
 				/>
 			)
 		}

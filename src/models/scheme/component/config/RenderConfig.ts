@@ -21,4 +21,5 @@ export type RenderConfig = {
 	defaultRepetitions: number
 	allowAddRemove: boolean,
 	rangePresets: RangePresets,
+	format: string
 }

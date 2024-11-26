@@ -6,10 +6,10 @@ import {RangePresets} from "@/models/scheme/component/config/RenderConfig.ts";
 const AntRangePicker = DatePicker.RangePicker;
 
 interface RangePickerProps {
-	value?: [Date, Date],
+	value?: [string, string],
 	format?: string,
 	rangePresets?: RangePresets,
-	onChange?: (date: [Date, Date]) => void,
+	onChange?: (date: [string, string]) => void,
 }
 
 export const RangePicker = ({value, format, rangePresets, onChange}: RangePickerProps) => {
@@ -38,12 +38,13 @@ export const RangePicker = ({value, format, rangePresets, onChange}: RangePicker
 		}
 	}, [rangePresets])
 
-	const inputRangeAdapter = (date: Date): Dayjs => {
+	const inputRangeAdapter = (date: string): Dayjs => {
 		return dayjs(date)
 	}
 
-	const outputRangeAdapter = (date: string): Date => {
-		return new Date(date)
+	const outputRangeAdapter = (date: string): string => {
+		const dateArray = date.split('.');
+		return new Date( +dateArray[2], +dateArray[1], +dateArray[0]).toISOString();
 	}
 
 	const rangeValue = useMemo<[Dayjs, Dayjs] | undefined>(() => {
