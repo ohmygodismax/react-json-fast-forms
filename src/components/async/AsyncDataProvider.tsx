@@ -25,6 +25,11 @@ interface AsyncProviderProps {
 export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => { //TODO: Очень большой компонент. Когда определится вся бизнес-логика разбить на небольшие функциональные компоненты.
 	const form = useFormInstance();
 
+	useEffect(() => {
+		setAsyncData(null);
+		setOutputData(null);
+	}, [config]);
+
 	const state = useWatch([], form); //Общее состояние формы
 
 	const watchedVariables = useWatch((values) => { //Только переменные, которые определены как наблюдаемые (для повторного запроса данных)
@@ -196,7 +201,7 @@ export const AsyncDataProvider = ({config, render}: AsyncProviderProps) => { //T
 		if (asyncData) {
 			setOutputData(generateOutputData(asyncData))
 		}
-	}, [asyncData, config]);
+	}, [asyncData]);
 
 
 	return (
