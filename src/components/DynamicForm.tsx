@@ -1,7 +1,7 @@
 import {FormState} from "@/models/FormState.ts";
 import {Form, theme} from "antd";
 import {useForm} from "antd/es/form/Form";
-import {ReactElement} from "react";
+import {ReactElement, useEffect} from "react";
 import {SchemeComponentParser} from "@/components/parser/SchemeComponentParser.tsx";
 import {SubmitButton} from "@/containers/SubmitButton.tsx";
 import {FormConfig} from "@/models/FormConfig.ts";
@@ -23,6 +23,23 @@ export const DynamicForm = ({name, accessToken, config, onChange, onFinish, isDi
 	const {	token: { colorBgBase }	} = theme.useToken();
 	const [form] = useForm<FormState>();
 
+	useEffect(() => {
+		form.setFieldsValue(config.state);
+	}, [config])
+
+	const handleFinish = (state: FormState) => {
+		if (onFinish) {
+			const result = {...state};
+			Object.entries(config.state).forEach(([key, value]) => {
+				if (!result[key]) {
+					result[key] = value;
+				}
+			});
+
+			onFinish(result);
+		}
+	}
+
 	return (
 		<DynamicFormContext.Provider value={{
 			formName: name,
@@ -36,7 +53,7 @@ export const DynamicForm = ({name, accessToken, config, onChange, onFinish, isDi
 				wrapperCol={config.meta?.layout?.wrapperCol || undefined}
 				labelAlign={'left'}
 				initialValues={config.state}
-				onFinish={onFinish}
+				onFinish={handleFinish}
 				onValuesChange={onChange}
 				style={{width:'100%', background: `${colorBgBase}`}}
 				disabled={isDisabled}
