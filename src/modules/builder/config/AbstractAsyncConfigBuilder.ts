@@ -59,6 +59,10 @@ abstract class AbstractAsyncConfigBuilder {
 			}
 		}
 	}
+
+	getResult = () => {
+		return this.asyncConfig;
+	}
 }
 
 export default AbstractAsyncConfigBuilder
