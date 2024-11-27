@@ -7,7 +7,14 @@
   "state": {
     "radio_1": "02",
     "switcher_1": true,
-    "availableSwitcher": false
+    "availableSwitcher": false,
+    "_test": "testtest"
+  },
+  "submit": {
+    "type": "post",
+    "url": "./",
+    "ignoredStateValuesRegExp": "^_",
+    "statePreRequestHandler": {"arguments": "state", "body": "return state"}
   },
   "scheme": {
     "content": {
