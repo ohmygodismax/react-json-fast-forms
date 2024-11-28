@@ -30,7 +30,7 @@ export const DynamicList = ({component}: DynamicListProps) => {
 					}
 				});
 				const initialValue = [];
-				for (let i = 0; i < defaultRepetitions - listValue.length; i++) {
+				for (let i = 0; i < defaultRepetitions - (listValue ? listValue.length : 0); i++) {
 					initialValue.push({...emptyItem});
 				}
 				form.setFieldValue(component.value?.path, initialValue);
